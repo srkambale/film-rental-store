@@ -1,16 +1,13 @@
 package com.example.demo.payment.model;
 
-
-
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payment")
-
 public class Payment {
-	@Id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
     private Long paymentId;
@@ -29,53 +26,67 @@ public class Payment {
 
     @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
+
+
+
+    public Payment() {
+    }
+
+    public Payment(Long customerId, Long staffId, Long rentalId, Double amount, LocalDateTime paymentDate) {
+        this.customerId = customerId;
+        this.staffId = staffId;
+        this.rentalId = rentalId;
+        this.amount = amount;
+        this.paymentDate = paymentDate;
+    }
+
+  
+
     public Long getPaymentId() {
-		return paymentId;
-	}
+        return paymentId;
+    }
 
-	public void setPaymentId(Long paymentId) {
-		this.paymentId = paymentId;
-	}
+    public void setPaymentId(Long paymentId) {
+        this.paymentId = paymentId;
+    }
 
-	public Long getCustomerId() {
-		return customerId;
-	}
+    public Long getCustomerId() {
+        return customerId;
+    }
 
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
-	}
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
 
-	public Long getStaffId() {
-		return staffId;
-	}
+    public Long getStaffId() {
+        return staffId;
+    }
 
-	public void setStaffId(Long staffId) {
-		this.staffId = staffId;
-	}
+    public void setStaffId(Long staffId) {
+        this.staffId = staffId;
+    }
 
-	public Long getRentalId() {
-		return rentalId;
-	}
+    public Long getRentalId() {
+        return rentalId;
+    }
 
-	public void setRentalId(Long rentalId) {
-		this.rentalId = rentalId;
-	}
+    public void setRentalId(Long rentalId) {
+        this.rentalId = rentalId;
+    }
 
-	public Double getAmount() {
-		return amount;
-	}
+    public Double getAmount() {
+        return amount;
+    }
 
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
 
-	public LocalDateTime getPaymentDate() {
-		return paymentDate;
-	}
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
+    }
 
-	public void setPaymentDate(LocalDateTime paymentDate) {
-		this.paymentDate = paymentDate;
-	}
-
-
+    public void setPaymentDate(LocalDateTime paymentDate) {
+        this.paymentDate = paymentDate;
+    }
 }
