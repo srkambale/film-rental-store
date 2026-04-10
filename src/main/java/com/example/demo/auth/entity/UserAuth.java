@@ -1,7 +1,5 @@
 package com.example.demo.auth.entity;
 
-
-
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +10,12 @@ public class UserAuth {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 50)
+    private String username;
+
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+
     @Column(nullable = false, length = 255)
     private String password;
 
@@ -19,13 +23,8 @@ public class UserAuth {
     @Column(nullable = false, length = 20)
     private Role role;
 
-    @OneToOne
-    @JoinColumn(name = "staff_id", referencedColumnName = "staff_id")
-    private Staff staff;
-
-    @OneToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
-    private Customer customer;
+    @Column(name = "ref_id")
+    private Integer refId;
 
     public enum Role {
         ADMIN, STAFF, CUSTOMER
@@ -34,17 +33,23 @@ public class UserAuth {
     // ── Constructors ───────────────────────────────────────────
     public UserAuth() {}
 
-    // ── Helper: get username or email depending on role ────────
+    // ── Helper: get login identifier based on role ─────────────
     public String getLoginIdentifier() {
         if (role == Role.CUSTOMER) {
-            return customer != null ? customer.getEmail() : null;
+            return this.email;
         }
-        return staff != null ? staff.getUsername() : null;
+        return this.username;
     }
 
     // ── Getters & Setters ──────────────────────────────────────
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
@@ -52,9 +57,6 @@ public class UserAuth {
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
 
-    public Staff getStaff() { return staff; }
-    public void setStaff(Staff staff) { this.staff = staff; }
-
-    public Customer getCustomer() { return customer; }
-    public void setCustomer(Customer customer) { this.customer = customer; }
+    public Integer getRefId() { return refId; }
+    public void setRefId(Integer refId) { this.refId = refId; }
 }

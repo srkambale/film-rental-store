@@ -39,7 +39,7 @@ public class Staff {
     @Column(name = "username", nullable = false, length = 16)
     private String username;
 
-    @Column(name = "password", length = 40)
+    @Column(name = "password", length = 255)
     private String password;
 
     @Column(name = "last_update")
