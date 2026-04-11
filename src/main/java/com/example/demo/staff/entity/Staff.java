@@ -12,7 +12,7 @@ public class Staff {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "staff_id")
+    @Column(name = "staff_id", columnDefinition = "TINYINT UNSIGNED")
     private Integer staffId;
 
     @NotBlank(message = "First name is required")
@@ -23,19 +23,19 @@ public class Staff {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "address_id")
+    @Column(name = "address_id", columnDefinition = "SMALLINT UNSIGNED")
     private Integer addressId;
 
     @JsonIgnore
     @Lob
-    @Column(name = "picture")
+    @Column(name = "picture", columnDefinition = "MEDIUMBLOB")
     private byte[] picture;
 
     @Email(message = "Invalid email")
     @Column(name = "email")
     private String email;
 
-    @Column(name = "store_id")
+    @Column(name = "store_id", columnDefinition = "TINYINT UNSIGNED")
     private Integer storeId;
 
     @NotNull(message = "Active status is required")

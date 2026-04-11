@@ -9,7 +9,7 @@ public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "city_id")
+    @Column(name = "city_id", columnDefinition = "SMALLINT UNSIGNED")
     private Integer cityId;
 
     @Column(name = "city", nullable = false, length = 50)

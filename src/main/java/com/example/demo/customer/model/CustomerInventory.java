@@ -4,20 +4,20 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "CustomerInventory")
+@Table(name = "inventory")
 public class CustomerInventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "inventory_id")
-    private Long inventoryId;
+    @Column(name = "inventory_id", columnDefinition = "MEDIUMINT UNSIGNED")
+    private Integer inventoryId;
 
     @ManyToOne
     @JoinColumn(name = "film_id")
     private Film film;
 
-    @Column(name = "store_id", nullable = false)
-    private Long storeId;
+    @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    private Integer storeId;
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
@@ -25,22 +25,21 @@ public class CustomerInventory {
     // Constructors
     public CustomerInventory() {}
 
-    public CustomerInventory(Long inventoryId, Film film, Long storeId, LocalDateTime lastUpdate) {
+    public CustomerInventory(Integer inventoryId, Film film, Integer storeId, LocalDateTime lastUpdate) {
         this.inventoryId = inventoryId;
         this.film = film;
         this.storeId = storeId;
         this.lastUpdate = lastUpdate;
     }
 
-    // Getters and Setters
-    public Long getInventoryId() { return inventoryId; }
-    public void setInventoryId(Long inventoryId) { this.inventoryId = inventoryId; }
+    public Integer getInventoryId() { return inventoryId; }
+    public void setInventoryId(Integer inventoryId) { this.inventoryId = inventoryId; }
 
     public Film getFilm() { return film; }
     public void setFilm(Film film) { this.film = film; }
 
-    public Long getStoreId() { return storeId; }
-    public void setStoreId(Long storeId) { this.storeId = storeId; }
+    public Integer getStoreId() { return storeId; }
+    public void setStoreId(Integer storeId) { this.storeId = storeId; }
 
     public LocalDateTime getLastUpdate() { return lastUpdate; }
     public void setLastUpdate(LocalDateTime lastUpdate) { this.lastUpdate = lastUpdate; }

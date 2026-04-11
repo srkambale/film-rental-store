@@ -20,14 +20,14 @@ public class UserAuth {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     private Role role;
 
     @Column(name = "ref_id")
     private Integer refId;
 
     public enum Role {
-        ADMIN, AuthStaff, AuthCustomer
+        ADMIN, STAFF, CUSTOMER
     }
 
     // ── Constructors ───────────────────────────────────────────
@@ -35,7 +35,7 @@ public class UserAuth {
 
     // ── Helper: get login identifier based on role ─────────────
     public String getLoginIdentifier() {
-        if (role == Role.AuthCustomer) {
+        if (role == Role.CUSTOMER) {
             return this.email;
         }
         return this.username;

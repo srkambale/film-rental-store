@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "AuthCustomer")
+@Table(name = "customer")
 public class AuthCustomer {
 
     @Id
@@ -14,7 +14,7 @@ public class AuthCustomer {
     @Column(name = "customer_id")
     private Integer customerId;
 
-    @Column(name = "store_id", nullable = false)
+    @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Short storeId;
 
     @Column(name = "first_name", nullable = false, length = 45)
@@ -26,7 +26,7 @@ public class AuthCustomer {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "address_id", nullable = false)
+    @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
     private Short addressId;
 
     @Column(name = "active", nullable = false)

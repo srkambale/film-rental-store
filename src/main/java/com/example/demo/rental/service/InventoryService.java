@@ -54,7 +54,7 @@ public class InventoryService {
     public List<InventoryDto> getAvailableInventory(Integer filmId, Integer storeId) {
         return inventoryRepository.findByFilmIdAndStoreId(filmId, storeId)
                 .stream()
-                .filter(inv -> !rentalRepository.existsByInventoryIdAndReturnDateIsNull(inv.getInventoryId()))
+                .filter(inv -> !rentalRepository.existsByInventory_InventoryIdAndReturnDateIsNull(inv.getInventoryId()))
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
@@ -74,7 +74,7 @@ public class InventoryService {
                     HttpStatus.NOT_FOUND, "Inventory item not found with id: " + id);
         }
         // Prevent deletion if currently rented
-        boolean currentlyRented = rentalRepository.existsByInventoryIdAndReturnDateIsNull(id);
+        boolean currentlyRented = rentalRepository.existsByInventory_InventoryIdAndReturnDateIsNull(id);
         if (currentlyRented) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Cannot delete inventory item that is currently rented out");

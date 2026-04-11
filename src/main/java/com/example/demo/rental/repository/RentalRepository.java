@@ -13,11 +13,11 @@ import java.util.List;
 @Repository
 public interface RentalRepository extends JpaRepository<Rental, Integer> {
 
-    List<Rental> findByCustomerId(Integer customerId);
+    List<Rental> findByCustomer_CustomerId(Integer customerId);
 
     List<Rental> findByStaffId(Integer staffId);
 
-    List<Rental> findByInventoryId(Integer inventoryId);
+    List<Rental> findByInventory_InventoryId(Integer inventoryId);
 
     // Active rentals = no return date
     List<Rental> findByReturnDateIsNull();
@@ -26,12 +26,12 @@ public interface RentalRepository extends JpaRepository<Rental, Integer> {
     List<Rental> findByReturnDateIsNotNull();
 
     // Active rentals by customer
-    List<Rental> findByCustomerIdAndReturnDateIsNull(Integer customerId);
+    List<Rental> findByCustomer_CustomerIdAndReturnDateIsNull(Integer customerId);
 
     // Overdue rentals: rental_date older than given date and not yet returned
     @Query("SELECT r FROM Rental r WHERE r.returnDate IS NULL AND r.rentalDate < :cutoff")
     List<Rental> findOverdueRentals(@Param("cutoff") LocalDateTime cutoff);
 
     // Check if inventory item is currently rented out
-    boolean existsByInventoryIdAndReturnDateIsNull(Integer inventoryId);
+    boolean existsByInventory_InventoryIdAndReturnDateIsNull(Integer inventoryId);
 }

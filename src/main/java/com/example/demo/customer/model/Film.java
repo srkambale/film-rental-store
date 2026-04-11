@@ -11,7 +11,7 @@ public class Film {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "film_id")
+    @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
     private Long filmId;
 
     @Column(name = "title", nullable = false, length = 128)
@@ -24,10 +24,10 @@ public class Film {
     @Column(name = "release_year")
     private Integer releaseYear;
 
-    @Column(name = "language_id", nullable = false)
+    @Column(name = "language_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Long languageId;
 
-    @Column(name = "original_language_id")
+    @Column(name = "original_language_id", columnDefinition = "TINYINT UNSIGNED")
     private Long originalLanguageId;
 
     @Column(name = "rental_duration", nullable = false)

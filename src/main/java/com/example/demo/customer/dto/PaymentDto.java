@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class PaymentDto {
-    private Long paymentId;
+    private Integer paymentId;
     private BigDecimal amount;
     private LocalDateTime paymentDate;
     private Long rentalId;
-	public Long getPaymentId() {
+	public Integer getPaymentId() {
 		return paymentId;
 	}
-	public void setPaymentId(Long paymentId) {
-		this.paymentId = paymentId;
+	public void setPaymentId(Integer integer) {
+		this.paymentId = integer;
 	}
 	public BigDecimal getAmount() {
 		return amount;

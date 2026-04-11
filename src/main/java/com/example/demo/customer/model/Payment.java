@@ -10,14 +10,14 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_id")
-    private Long paymentId;
+    @Column(name = "payment_id", columnDefinition = "SMALLINT UNSIGNED")
+    private Integer paymentId;
 
-    @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    @Column(name = "customer_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
+    private Integer customerId;
 
-    @Column(name = "staff_id", nullable = false)
-    private Long staffId;
+    @Column(name = "staff_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    private Integer staffId;
 
     @ManyToOne
     @JoinColumn(name = "rental_id")
@@ -35,7 +35,7 @@ public class Payment {
     // Constructors
     public Payment() {}
 
-    public Payment(Long paymentId, Long customerId, Long staffId,
+    public Payment(Integer paymentId, Integer customerId, Integer staffId,
                    CustomerRental CustomerRental, BigDecimal amount, LocalDateTime paymentDate, LocalDateTime lastUpdate) {
         this.paymentId = paymentId;
         this.customerId = customerId;
@@ -47,14 +47,14 @@ public class Payment {
     }
 
     // Getters and Setters
-    public Long getPaymentId() { return paymentId; }
-    public void setPaymentId(Long paymentId) { this.paymentId = paymentId; }
+    public Integer getPaymentId() { return paymentId; }
+    public void setPaymentId(Integer paymentId) { this.paymentId = paymentId; }
 
-    public Long getCustomerId() { return customerId; }
-    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+    public Integer getCustomerId() { return customerId; }
+    public void setCustomerId(Integer customerId) { this.customerId = customerId; }
 
-    public Long getStaffId() { return staffId; }
-    public void setStaffId(Long staffId) { this.staffId = staffId; }
+    public Integer getStaffId() { return staffId; }
+    public void setStaffId(Integer staffId) { this.staffId = staffId; }
 
     public CustomerRental getRental() { return CustomerRental; }
     public void setRental(CustomerRental CustomerRental) { this.CustomerRental = CustomerRental; }

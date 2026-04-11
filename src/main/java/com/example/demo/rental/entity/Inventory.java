@@ -9,13 +9,13 @@ public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "inventory_id")
+    @Column(name = "inventory_id", columnDefinition = "MEDIUMINT UNSIGNED")
     private Integer inventoryId;
 
-    @Column(name = "film_id", nullable = false)
+    @Column(name = "film_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
     private Integer filmId;
 
-    @Column(name = "store_id", nullable = false)
+    @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Integer storeId;
 
     @Column(name = "last_update", insertable = false, updatable = false)

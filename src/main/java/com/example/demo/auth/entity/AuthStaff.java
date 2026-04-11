@@ -6,12 +6,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "AuthStaff")
+@Table(name = "staff")
 public class AuthStaff {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "staff_id")
+    @Column(name = "staff_id", columnDefinition = "TINYINT UNSIGNED")
     private Integer staffId;
 
     @Column(name = "first_name", nullable = false, length = 45)
@@ -20,17 +20,17 @@ public class AuthStaff {
     @Column(name = "last_name", nullable = false, length = 45)
     private String lastName;
 
-    @Column(name = "address_id", nullable = false)
+    @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
     private Short addressId;
 
     @Lob
-    @Column(name = "picture")
+    @Column(name = "picture", columnDefinition = "MEDIUMBLOB")
     private byte[] picture;
 
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "store_id", nullable = false)
+    @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Short storeId;
 
     @Column(name = "active", nullable = false)

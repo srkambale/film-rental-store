@@ -109,7 +109,9 @@ public class CustomerServiceImpl implements CustomerService {
 	        dto.setRentalId(r.getRentalId());
 	        dto.setRentalDate(r.getRentalDate());
 	        dto.setReturnDate(r.getReturnDate());
-	        dto.setFilmTitle(r.getInventory().getFilm().getTitle());
+	        if (r.getInventory() != null && r.getInventory().getFilm() != null) {
+	            dto.setFilmTitle(r.getInventory().getFilm().getTitle());
+	        }
 	        dto.setStatus(r.getReturnDate() == null ? "RENTED" : "RETURNED");
 	        return dto;
 	    }
@@ -119,7 +121,7 @@ public class CustomerServiceImpl implements CustomerService {
 	        dto.setPaymentId(p.getPaymentId());
 	        dto.setAmount(p.getAmount());
 	        dto.setPaymentDate(p.getPaymentDate());
-	        dto.setRentalId(p.getRental().getRentalId());
+	        dto.setRentalId(p.getRental() != null ? p.getRental().getRentalId() : null);
 	        return dto;
 	    }
 	}

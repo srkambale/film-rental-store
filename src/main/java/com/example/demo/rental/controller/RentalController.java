@@ -1,6 +1,5 @@
 package com.example.demo.rental.controller;
 
-import com.example.demo.customer.model.Customer;
 import com.example.demo.rental.entity.Rental;
 import com.example.demo.rental.service.RentalService;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +16,11 @@ public class RentalController {
         this.service = service;
     }
 
-    // ✅ CREATE RENTAL
+// 1. Fix: RentalController - @RequestParam Customer is invalid, use Integer
     @PostMapping
     public Rental createRental(
             @RequestParam Integer inventoryId,
-            @RequestParam Customer customerId,
+            @RequestParam Integer customerId,
             @RequestParam Integer staffId) {
 
         return service.createRental(inventoryId, customerId, staffId);

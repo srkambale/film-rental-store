@@ -10,7 +10,7 @@ public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "country_id")
+    @Column(name = "country_id", columnDefinition = "SMALLINT UNSIGNED")
     private Integer countryId;
 
     @Column(name = "country", nullable = false, length = 50)

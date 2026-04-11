@@ -43,10 +43,12 @@ public class CustomerRentalServiceImpl implements CustomerRentalService {
         CustomerInventory inventory = inventoryRepository.findById(request.getInventoryId())
                 .orElseThrow(() -> new CustomerResourceNotFoundException("Inventory not found"));
 
-        CustomerRental rental = new Rental();
+        CustomerRental rental = new CustomerRental();
         rental.setCustomer(customer);
         rental.setInventory(inventory);
         rental.setRentalDate(LocalDateTime.now());
+        rental.setStaffId(1L); // default staff, update as needed
+        rental.setLastUpdate(LocalDateTime.now());
 
         CustomerRental saved = rentalRepository.save(rental);
 

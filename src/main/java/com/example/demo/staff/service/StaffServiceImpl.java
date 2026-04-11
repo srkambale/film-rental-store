@@ -1,14 +1,12 @@
 package com.example.demo.staff.service;
 
-import org.springframework.stereotype.Service;
-
 import com.example.demo.staff.entity.Staff;
 import com.example.demo.staff.exception.ResourceNotFoundException;
 import com.example.demo.staff.repository.StaffRepository;
 
 import java.util.List;
 
-@Service
+// StaffService handles all logic directly - this class is unused
 public class StaffServiceImpl {
 
     private final StaffRepository repository;

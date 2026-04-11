@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface CustomerInventoryRepository extends JpaRepository<CustomerInventory, Long> {
-    List<CustomerInventory> findByFilmId(Long filmId);
+    List<CustomerInventory> findByFilm_FilmId(Long filmId);
 }

@@ -13,7 +13,7 @@ public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rental_id")
+    @Column(name = "rental_id", columnDefinition = "MEDIUMINT UNSIGNED")
     private Integer rentalId;
 
     @Column(name = "rental_date", nullable = false)
@@ -32,7 +32,7 @@ public class Rental {
     @Column(name = "return_date")
     private LocalDateTime returnDate;
 
-    @Column(name = "staff_id", nullable = false)
+    @Column(name = "staff_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Integer staffId;
 
     @Column(name = "last_update", insertable = false, updatable = false)

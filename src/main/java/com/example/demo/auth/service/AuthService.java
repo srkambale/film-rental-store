@@ -80,10 +80,24 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
 
-        UserAuth.Role role =
-                UserAuth.Role.valueOf(request.getRole().toUpperCase());
+        // Match role case-insensitively against enum constants
+        String roleInput = request.getRole();
+        UserAuth.Role role = null;
+        for (UserAuth.Role r : UserAuth.Role.values()) {
+            if (r.name().equalsIgnoreCase(roleInput)) {
+                role = r;
+                break;
+            }
+        }
+        if (role == null) {
+            if ("authcustomer".equalsIgnoreCase(roleInput)) role = UserAuth.Role.CUSTOMER;
+            else if ("authstaff".equalsIgnoreCase(roleInput)) role = UserAuth.Role.STAFF;
+        }
+        if (role == null) {
+            throw new RuntimeException("Invalid role: " + roleInput + ". Valid values: ADMIN, STAFF, CUSTOMER");
+        }
 
-        if (role == UserAuth.Role.AuthCustomer) {
+        if (role == UserAuth.Role.CUSTOMER) {
             return registerCustomer(request);
         } else {
             return registerStaff(request, role);
@@ -118,16 +132,16 @@ public class AuthService {
         userAuth.setUsername(username);
         userAuth.setEmail(request.getEmail());
         userAuth.setPassword(passwordEncoder.encode(request.getPassword()));
-        userAuth.setRole(UserAuth.Role.AuthCustomer);
+        userAuth.setRole(UserAuth.Role.CUSTOMER);
         userAuth.setRefId(saved.getCustomerId());
         userAuthRepository.save(userAuth);
 
         // 3. Generate JWT
         UserDetails userDetails =
                 userDetailsService.loadUserByUsername(request.getEmail());
-        String token = jwtService.generateToken(userDetails, "AuthCustomer");
+        String token = jwtService.generateToken(userDetails, "CUSTOMER");
 
-        return new AuthResponse(token, "AuthCustomer", request.getEmail());
+        return new AuthResponse(token, "CUSTOMER", request.getEmail());
     }
 
     // ── REGISTER AuthStaff / ADMIN ─────────────────────────────────

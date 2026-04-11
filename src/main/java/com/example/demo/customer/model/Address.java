@@ -10,7 +10,7 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id")
+    @Column(name = "address_id", columnDefinition = "SMALLINT UNSIGNED")
     private Long addressId;
 
     @Column(name = "address", nullable = false, length = 50)

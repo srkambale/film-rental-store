@@ -9,11 +9,11 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
-    private Long customerId;
+    @Column(name = "customer_id", columnDefinition = "SMALLINT UNSIGNED")
+    private Integer customerId;
 
-    @Column(name = "store_id", nullable = false)
-    private Long storeId;
+    @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    private Integer storeId;
 
     @Column(name = "first_name", nullable = false, length = 45)
     private String firstName;
@@ -40,7 +40,7 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(Long storeId, String firstName, String lastName, String email,
+    public Customer(Integer storeId, String firstName, String lastName, String email,
             Address address, Boolean active, LocalDateTime createDate, LocalDateTime lastUpdate) {
     		this.storeId = storeId;
     		this.firstName = firstName;
@@ -52,21 +52,11 @@ public class Customer {
     		this.lastUpdate = lastUpdate;
     }
 
-    public Long getCustomerId() {
-        return customerId;
-    }
+    public Integer getCustomerId() { return customerId; }
+    public void setCustomerId(Integer customerId) { this.customerId = customerId; }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public Long getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(Long storeId) {
-        this.storeId = storeId;
-    }
+    public Integer getStoreId() { return storeId; }
+    public void setStoreId(Integer storeId) { this.storeId = storeId; }
 
     public String getFirstName() {
         return firstName;

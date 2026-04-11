@@ -1,6 +1,7 @@
 package com.example.demo.rental.service;
 
 import com.example.demo.customer.model.Customer;
+import com.example.demo.customer.repository.CustomerRepository;
 import com.example.demo.rental.entity.Inventory;
 import com.example.demo.rental.entity.Rental;
 import com.example.demo.rental.repository.InventoryRepository;
@@ -15,22 +16,28 @@ public class RentalService {
 
     private final RentalRepository rentalRepository;
     private final InventoryRepository inventoryRepository;
+    private final CustomerRepository customerRepository;
 
     public RentalService(RentalRepository rentalRepository,
-                         InventoryRepository inventoryRepository) {
+                         InventoryRepository inventoryRepository,
+                         CustomerRepository customerRepository) {
         this.rentalRepository = rentalRepository;
         this.inventoryRepository = inventoryRepository;
+        this.customerRepository = customerRepository;
     }
 
     // ✅ CREATE RENTAL
-    public Rental createRental(Integer inventoryId, Customer customerId, Integer staffId) {
+    public Rental createRental(Integer inventoryId, Integer customerId, Integer staffId) {
 
         Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new RuntimeException("Inventory not found"));
 
+        Customer customer = customerRepository.findById(Long.valueOf(customerId))
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
         Rental rental = new Rental();
         rental.setInventory(inventory);
-        rental.setCustomer(customerId);
+        rental.setCustomer(customer);
         rental.setStaffId(staffId);
         rental.setRentalDate(LocalDateTime.now());
 
