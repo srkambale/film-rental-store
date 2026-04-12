@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/v1/catalog/categories")
+@RestController("catalogCategoryController")
+@RequestMapping("/api/catalog/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -20,6 +20,11 @@ public class CategoryController {
     @GetMapping
     public List<CategoryDto> getAllCategories() {
         return categoryService.getAllCategories();
+    }
+
+    @GetMapping("/search")
+    public List<CategoryDto> searchCategories(@RequestParam String name) {
+        return categoryService.searchCategories(name);
     }
 
     @GetMapping("/{id}")

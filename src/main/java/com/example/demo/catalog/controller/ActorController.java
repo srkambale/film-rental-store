@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/v1/catalog/actors")
+@RestController("catalogActorController")
+@RequestMapping("/api/catalog/actors")
 public class ActorController {
 
     private final ActorService actorService;
@@ -20,6 +20,11 @@ public class ActorController {
     @GetMapping
     public List<ActorDto> getAllActors() {
         return actorService.getAllActors();
+    }
+
+    @GetMapping("/search")
+    public List<ActorDto> searchActors(@RequestParam String name) {
+        return actorService.searchActors(name);
     }
 
     @GetMapping("/{id}")

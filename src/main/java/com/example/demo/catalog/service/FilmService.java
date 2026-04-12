@@ -32,6 +32,44 @@ public class FilmService {
     }
 
     @Transactional(readOnly = true)
+    public List<FilmSummaryDto> searchFilms(String title, Integer year) {
+        List<Film> films;
+        if (title != null && year != null) {
+            films = filmRepository.findByTitleContainingIgnoreCaseAndReleaseYear(title, year);
+        } else if (title != null) {
+            films = filmRepository.findByTitleContainingIgnoreCase(title);
+        } else if (year != null) {
+            films = filmRepository.findByReleaseYear(year);
+        } else {
+            films = filmRepository.findAll();
+        }
+        return films.stream()
+                .map(this::mapToSummaryDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<FilmSummaryDto> getFilmsByCategory(String categoryName) {
+        return filmRepository.findByCategoryName(categoryName).stream()
+                .map(this::mapToSummaryDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<FilmSummaryDto> getFilmsByActor(Long actorId) {
+        return filmRepository.findByActorId(actorId).stream()
+                .map(this::mapToSummaryDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<FilmSummaryDto> getFilmsByActorName(String name) {
+        return filmRepository.findByActorName(name).stream()
+                .map(this::mapToSummaryDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public FilmDto getFilmById(Long id) {
         return filmRepository.findById(id)
                 .map(this::mapToDto)
@@ -50,6 +88,21 @@ public class FilmService {
     }
 
     private FilmDto mapToDto(Film film) {
+        Set<ActorDto> actors = film.getFilmActors() == null ? Set.of() :
+                film.getFilmActors().stream()
+                        .map(fa -> new ActorDto(
+                                fa.getActor().getActorId(),
+                                fa.getActor().getFirstName(),
+                                fa.getActor().getLastName()))
+                        .collect(Collectors.toSet());
+
+        Set<CategoryDto> categories = film.getFilmCategories() == null ? Set.of() :
+                film.getFilmCategories().stream()
+                        .map(fc -> new CategoryDto(
+                                fc.getCategory().getCategoryId(),
+                                fc.getCategory().getName()))
+                        .collect(Collectors.toSet());
+
         return new FilmDto(
                 film.getFilmId(),
                 film.getTitle(),
@@ -63,8 +116,8 @@ public class FilmService {
                 film.getReplacementCost(),
                 film.getRating(),
                 film.getSpecialFeatures(),
-                Set.of(),
-                Set.of()
+                actors,
+                categories
         );
     }
 }

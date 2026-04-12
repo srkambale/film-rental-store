@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/v1/catalog/films")
+// Add the unique bean name right here inside the annotation!
+@RestController("catalogFilmController") 
+@RequestMapping("/api/catalog/films")
 public class FilmController {
 
     private final FilmService filmService;
@@ -20,6 +21,28 @@ public class FilmController {
     @GetMapping
     public List<FilmSummaryDto> getAllFilms() {
         return filmService.getAllFilms();
+    }
+
+    @GetMapping("/search")
+    public List<FilmSummaryDto> searchFilms(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Integer year) {
+        return filmService.searchFilms(title, year);
+    }
+
+    @GetMapping("/category/{categoryName}")
+    public List<FilmSummaryDto> getFilmsByCategory(@PathVariable String categoryName) {
+        return filmService.getFilmsByCategory(categoryName);
+    }
+
+    @GetMapping("/actor/{actorId}")
+    public List<FilmSummaryDto> getFilmsByActor(@PathVariable Long actorId) {
+        return filmService.getFilmsByActor(actorId);
+    }
+
+    @GetMapping("/actor")
+    public List<FilmSummaryDto> getFilmsByActorName(@RequestParam String name) {
+        return filmService.getFilmsByActorName(name);
     }
 
     @GetMapping("/{id}")

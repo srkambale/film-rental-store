@@ -28,6 +28,13 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
+    public List<CategoryDto> searchCategories(String name) {
+        return categoryRepository.findByNameContainingIgnoreCase(name).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public CategoryDto getCategoryById(Long id) {
         return categoryRepository.findById(id)
                 .map(this::mapToDto)

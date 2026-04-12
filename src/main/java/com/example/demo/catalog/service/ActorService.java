@@ -60,6 +60,13 @@ public class ActorService {
         actorRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
+    public List<ActorDto> searchActors(String name) {
+        return actorRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     private ActorDto mapToDto(Actor actor) {
         return new ActorDto(actor.getActorId(), actor.getFirstName(), actor.getLastName());
     }

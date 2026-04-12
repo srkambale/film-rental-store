@@ -4,9 +4,17 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import java.util.Set;
+
 @Entity(name = "CatalogFilm")
 @Table(name = "film")
 public class Film {
+
+    @OneToMany(mappedBy = "film")
+    private Set<FilmActor> filmActors;
+
+    @OneToMany(mappedBy = "film")
+    private Set<FilmCategory> filmCategories;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -171,5 +179,20 @@ public class Film {
 
     public void setLastUpdate(LocalDateTime lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+    public Set<FilmActor> getFilmActors() {
+        return filmActors;
+    }
+
+    public void setFilmActors(Set<FilmActor> filmActors) {
+        this.filmActors = filmActors;
+    }
+
+    public Set<FilmCategory> getFilmCategories() {
+        return filmCategories;
+    }
+
+    public void setFilmCategories(Set<FilmCategory> filmCategories) {
+        this.filmCategories = filmCategories;
     }
 }
