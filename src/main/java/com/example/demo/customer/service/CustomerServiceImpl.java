@@ -72,7 +72,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	    @Override
 	    public List<PaymentDto> getCustomerPayments(Long customerId) {
-	        List<Payment> payments = paymentRepository.findByCustomerId(customerId);
+	    	List<Payment> payments = paymentRepository.findByCustomer_CustomerId(customerId);
 
 	        return payments.stream()
 	                .map(this::mapToPaymentDto)
