@@ -1,0 +1,33 @@
+package com.example.demo.catalog.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.example.demo.catalog.entity.Film;
+
+import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+@Repository("catalogFilmRepository")
+public interface FilmRepository extends JpaRepository<Film, Long> {
+    List<Film> findByTitleContainingIgnoreCase(String title);
+    List<Film> findByReleaseYear(Integer releaseYear);
+    List<Film> findByTitleContainingIgnoreCaseAndReleaseYear(String title, Integer releaseYear);
+    
+    @Query("SELECT fc.film FROM CatalogFilmCategory fc WHERE fc.category.name = :categoryName")
+    List<Film> findByCategoryName(@Param("categoryName") String categoryName);
+
+    @Query("SELECT fa.film FROM CatalogFilmActor fa WHERE fa.actor.actorId = :actorId")
+    List<Film> findByActorId(@Param("actorId") Long actorId);
+
+    @Query("SELECT fa.film FROM CatalogFilmActor fa WHERE " +
+           "LOWER(fa.actor.firstName) LIKE LOWER(CONCAT('%', :name, '%')) OR " +
+           "LOWER(fa.actor.lastName) LIKE LOWER(CONCAT('%', :name, '%'))")
+    List<Film> findByActorName(@Param("name") String name);
+
+    @Query("SELECT f FROM CatalogFilm f WHERE f.language.name = :languageName")
+    List<Film> findByLanguageName(@Param("languageName") String languageName);
+
+    List<Film> findByRating(String rating);
+}
