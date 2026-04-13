@@ -1,7 +1,7 @@
 package com.example.demo.catalog.service;
 
 import com.example.demo.catalog.dto.ActorDto;
-import com.example.demo.catalog.entity.Actor;
+import com.example.demo.catalog.model.Actor;
 import com.example.demo.catalog.repository.ActorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

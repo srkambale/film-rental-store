@@ -1,7 +1,7 @@
 package com.example.demo.catalog.service;
 
 import com.example.demo.catalog.dto.CategoryDto;
-import com.example.demo.catalog.entity.Category;
+import com.example.demo.catalog.model.Category;
 import com.example.demo.catalog.repository.CategoryRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

@@ -4,7 +4,7 @@ import com.example.demo.catalog.dto.ActorDto;
 import com.example.demo.catalog.dto.CategoryDto;
 import com.example.demo.catalog.dto.FilmDto;
 import com.example.demo.catalog.dto.FilmSummaryDto;
-import com.example.demo.catalog.entity.Film;
+import com.example.demo.catalog.model.Film;
 import com.example.demo.catalog.repository.FilmRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

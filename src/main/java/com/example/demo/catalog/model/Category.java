@@ -1,37 +1,37 @@
-package com.example.demo.catalog.entity;
+package com.example.demo.catalog.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity(name = "CatalogLanguage")
-@Table(name = "language")
-public class Language {
+@Entity(name = "CatalogCategory")
+@Table(name = "category")
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "language_id", columnDefinition = "TINYINT UNSIGNED")
-    private Long languageId;
+    @Column(name = "category_id", columnDefinition = "TINYINT UNSIGNED")
+    private Long categoryId;
 
-    @Column(name = "name", nullable = false, length = 20)
+    @Column(name = "name", nullable = false, length = 25)
     private String name;
 
     @Column(name = "last_update", nullable = false, insertable = false, updatable = false)
     private LocalDateTime lastUpdate;
 
-    public Language() {}
+    public Category() {}
 
-    public Language(Long languageId, String name, LocalDateTime lastUpdate) {
-        this.languageId = languageId;
+    public Category(Long categoryId, String name, LocalDateTime lastUpdate) {
+        this.categoryId = categoryId;
         this.name = name;
         this.lastUpdate = lastUpdate;
     }
 
-    public Long getLanguageId() {
-        return languageId;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setLanguageId(Long languageId) {
-        this.languageId = languageId;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getName() {
