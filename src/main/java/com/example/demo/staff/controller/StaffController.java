@@ -9,7 +9,7 @@ import com.example.demo.staff.service.StaffService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/staff")
+@RequestMapping("/api/v1/staff")
 public class StaffController {
 
     private final StaffService service;

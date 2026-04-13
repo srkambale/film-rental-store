@@ -9,7 +9,7 @@ import java.util.List;
 
 // Add the unique bean name right here inside the annotation!
 @RestController("catalogFilmController") 
-@RequestMapping("/api/catalog/films")
+@RequestMapping("/api/v1/catalog/films")
 public class FilmController {
 
     private final FilmService filmService;

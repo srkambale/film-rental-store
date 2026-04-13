@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController("catalogActorController")
-@RequestMapping("/api/catalog/actors")
+@RequestMapping("/api/v1/catalog/actors")
 public class ActorController {
 
     private final ActorService actorService;

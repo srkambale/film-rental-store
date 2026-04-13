@@ -13,7 +13,7 @@ import com.example.demo.customer.dto.RentalResponseDto;
 import com.example.demo.customer.service.CustomerService;
 
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/api/v1/customers")
 public class CustomerController {
 
     private CustomerService customerService;
