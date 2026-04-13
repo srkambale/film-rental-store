@@ -24,4 +24,9 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
            "LOWER(fa.actor.firstName) LIKE LOWER(CONCAT('%', :name, '%')) OR " +
            "LOWER(fa.actor.lastName) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<Film> findByActorName(@Param("name") String name);
+
+    @Query("SELECT f FROM CatalogFilm f WHERE f.language.name = :languageName")
+    List<Film> findByLanguageName(@Param("languageName") String languageName);
+
+    List<Film> findByRating(String rating);
 }

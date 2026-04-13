@@ -70,6 +70,20 @@ public class FilmService {
     }
 
     @Transactional(readOnly = true)
+    public List<FilmSummaryDto> getFilmsByLanguage(String languageName) {
+        return filmRepository.findByLanguageName(languageName).stream()
+                .map(this::mapToSummaryDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<FilmSummaryDto> getFilmsByRating(String rating) {
+        return filmRepository.findByRating(rating).stream()
+                .map(this::mapToSummaryDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public FilmDto getFilmById(Long id) {
         return filmRepository.findById(id)
                 .map(this::mapToDto)
@@ -83,21 +97,20 @@ public class FilmService {
                 film.getReleaseYear(),
                 film.getRentalRate(),
                 film.getLength(),
-                film.getRating()
-        );
+                film.getRating());
     }
 
     private FilmDto mapToDto(Film film) {
-        Set<ActorDto> actors = film.getFilmActors() == null ? Set.of() :
-                film.getFilmActors().stream()
+        Set<ActorDto> actors = film.getFilmActors() == null ? Set.of()
+                : film.getFilmActors().stream()
                         .map(fa -> new ActorDto(
                                 fa.getActor().getActorId(),
                                 fa.getActor().getFirstName(),
                                 fa.getActor().getLastName()))
                         .collect(Collectors.toSet());
 
-        Set<CategoryDto> categories = film.getFilmCategories() == null ? Set.of() :
-                film.getFilmCategories().stream()
+        Set<CategoryDto> categories = film.getFilmCategories() == null ? Set.of()
+                : film.getFilmCategories().stream()
                         .map(fc -> new CategoryDto(
                                 fc.getCategory().getCategoryId(),
                                 fc.getCategory().getName()))
@@ -117,7 +130,6 @@ public class FilmService {
                 film.getRating(),
                 film.getSpecialFeatures(),
                 actors,
-                categories
-        );
+                categories);
     }
 }

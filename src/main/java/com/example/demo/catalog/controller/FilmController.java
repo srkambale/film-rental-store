@@ -45,6 +45,16 @@ public class FilmController {
         return filmService.getFilmsByActorName(name);
     }
 
+    @GetMapping("/language/{name}")
+    public List<FilmSummaryDto> getFilmsByLanguage(@PathVariable String name) {
+        return filmService.getFilmsByLanguage(name);
+    }
+
+    @GetMapping("/rating/{rating}")
+    public List<FilmSummaryDto> getFilmsByRating(@PathVariable String rating) {
+        return filmService.getFilmsByRating(rating);
+    }
+
     @GetMapping("/{id}")
     public FilmDto getFilmById(@PathVariable Long id) {
         return filmService.getFilmById(id);

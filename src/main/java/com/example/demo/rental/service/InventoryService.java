@@ -19,7 +19,7 @@ public class InventoryService {
     private final RentalRepository rentalRepository;
 
     public InventoryService(InventoryRepository inventoryRepository,
-                            RentalRepository rentalRepository) {
+            RentalRepository rentalRepository) {
         this.inventoryRepository = inventoryRepository;
         this.rentalRepository = rentalRepository;
     }
