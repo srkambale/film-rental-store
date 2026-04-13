@@ -1,4 +1,4 @@
-package com.example.demo.catalog.model;
+package com.example.demo.catalog.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

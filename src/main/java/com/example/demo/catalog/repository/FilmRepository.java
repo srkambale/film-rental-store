@@ -3,7 +3,7 @@ package com.example.demo.catalog.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.catalog.model.Film;
+import com.example.demo.catalog.entity.Film;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
