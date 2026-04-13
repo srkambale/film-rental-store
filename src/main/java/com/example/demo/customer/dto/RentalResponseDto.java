@@ -8,6 +8,8 @@ public class RentalResponseDto {
     private LocalDateTime rentalDate;
     private LocalDateTime returnDate;
     private String status;
+    private Boolean isOverdue;
+
 	public Long getRentalId() {
 		return rentalId;
 	}
@@ -38,6 +40,10 @@ public class RentalResponseDto {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-    
-    
+	public Boolean getIsOverdue() {
+		return isOverdue;
+	}
+	public void setIsOverdue(Boolean isOverdue) {
+		this.isOverdue = isOverdue;
+	}
 }

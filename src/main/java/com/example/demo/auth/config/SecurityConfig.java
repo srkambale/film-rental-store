@@ -53,10 +53,10 @@ public class SecurityConfig {
             )
 
             .authorizeHttpRequests(auth -> auth
-            		.requestMatchers("/api/auth/**").permitAll()
-            	    .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-            	    .requestMatchers("/api/staff/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
-            	    .requestMatchers("/api/customer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CUSTOMER")
+            		.requestMatchers("/api/v1/auth/**").permitAll()
+            	    .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+            	    .requestMatchers("/api/v1/staff/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
+            	    .requestMatchers("/api/v1/customer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CUSTOMER")
             	    .anyRequest().authenticated()
             	)
             .sessionManagement(session -> session

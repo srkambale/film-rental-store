@@ -1,5 +1,6 @@
 package com.example.demo.customer.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -17,14 +18,17 @@ public class CustomerServiceImpl implements CustomerService {
 	private CustomerRepository customerRepository;
     private CustomerRentalRepository rentalRepository;
     private PaymentRepository paymentRepository;
+    private AddressRepository addressRepository;
 
 
     public CustomerServiceImpl(CustomerRepository customerRepository,
                                CustomerRentalRepository rentalRepository,
-                               PaymentRepository paymentRepository) {
+                               PaymentRepository paymentRepository,
+                               AddressRepository addressRepository) {
         this.customerRepository = customerRepository;
         this.rentalRepository = rentalRepository;
         this.paymentRepository = paymentRepository;
+        this.addressRepository = addressRepository;
     }
 
 	    @Override
@@ -33,6 +37,25 @@ public class CustomerServiceImpl implements CustomerService {
 	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
 
 	        return mapToDto(customer);
+	    }
+
+	    @Override
+	    public CustomerDto createCustomer(CustomerCreateDto dto) {
+	        Address address = addressRepository.findById(dto.getAddressId())
+	                .orElseThrow(() -> new CustomerResourceNotFoundException("Address not found with id " + dto.getAddressId()));
+	        
+	        Customer customer = new Customer();
+	        customer.setFirstName(dto.getFirstName());
+	        customer.setLastName(dto.getLastName());
+	        customer.setEmail(dto.getEmail());
+	        customer.setStoreId(dto.getStoreId());
+	        customer.setAddress(address);
+	        customer.setActive(true);
+	        customer.setCreateDate(java.time.LocalDateTime.now());
+	        customer.setLastUpdate(java.time.LocalDateTime.now());
+	        
+	        Customer savedCustomer = customerRepository.save(customer);
+	        return mapToDto(savedCustomer);
 	    }
 
 	    @Override
@@ -79,6 +102,64 @@ public class CustomerServiceImpl implements CustomerService {
 	                .toList();
 	    }
 
+	    @Override
+	    public List<CustomerDto> getCustomersByName(String name) {
+	        List<Customer> customers = customerRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name);
+	        
+	        return customers.stream()
+	                .map(this::mapToDto)
+	                .toList();
+	    }
+
+	    @Override
+	    public List<CustomerDto> getCustomersByLocation(String location) {
+	        List<Customer> customers = customerRepository.findByLocationIgnoreCase(location);
+	        return customers.stream()
+	                .map(this::mapToDto)
+	                .toList();
+	    }
+
+	    @Override
+	    public CustomerDto patchCustomer(Long id, CustomerUpdateDto dto) {
+	        Customer customer = customerRepository.findById(id)
+	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
+
+	        if (dto.getFirstName() != null) customer.setFirstName(dto.getFirstName());
+	        if (dto.getLastName() != null) customer.setLastName(dto.getLastName());
+	        if (dto.getEmail() != null) customer.setEmail(dto.getEmail());
+
+	        return mapToDto(customerRepository.save(customer));
+	    }
+
+	    @Override
+	    public AddressDto patchAddress(Long customerId, AddressDto dto) {
+	        Customer customer = customerRepository.findById(customerId)
+	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
+
+	        Address address = customer.getAddress();
+	        if (dto.getAddress() != null) address.setAddress(dto.getAddress());
+	        if (dto.getDistrict() != null) address.setDistrict(dto.getDistrict());
+	        if (dto.getPostalCode() != null) address.setPostalCode(dto.getPostalCode());
+	        if (dto.getPhone() != null) address.setPhone(dto.getPhone());
+
+	        customerRepository.save(customer);
+	        return mapToAddressDto(address);
+	    }
+
+	    @Override
+	    public PaymentDto getCustomerPaymentById(Long customerId, Long paymentId) {
+	        Payment payment = paymentRepository.findByCustomerIdAndPaymentId(customerId, paymentId)
+	                .orElseThrow(() -> new CustomerResourceNotFoundException("Payment not found"));
+	        return mapToPaymentDto(payment);
+	    }
+
+	    @Override
+	    public RentalResponseDto getCustomerRentalById(Long customerId, Long rentalId) {
+	        CustomerRental rental = rentalRepository.fetchByCustomerIdAndRentalId(customerId, rentalId)
+	                .orElseThrow(() -> new CustomerResourceNotFoundException("Rental not found"));
+	        return mapToRentalDto(rental);
+	    }
+
 	    // ================== MAPPERS ==================
 
 	    private CustomerDto mapToDto(Customer c) {
@@ -108,11 +189,25 @@ public class CustomerServiceImpl implements CustomerService {
 	        RentalResponseDto dto = new RentalResponseDto();
 	        dto.setRentalId(r.getRentalId());
 	        dto.setRentalDate(r.getRentalDate());
-	        dto.setReturnDate(r.getReturnDate());
+	        
+	        if (r.getReturnDate() == null) {
+	            dto.setStatus("RENTED");
+	            if (r.getInventory() != null && r.getInventory().getFilm() != null && r.getInventory().getFilm().getRentalDuration() != null) {
+	                LocalDateTime expectedReturn = r.getRentalDate().plusDays(r.getInventory().getFilm().getRentalDuration());
+	                dto.setReturnDate(expectedReturn);
+	                dto.setIsOverdue(LocalDateTime.now().isAfter(expectedReturn));
+	            } else {
+	                dto.setIsOverdue(false);
+	            }
+	        } else {
+	            dto.setStatus("RETURNED");
+	            dto.setReturnDate(r.getReturnDate());
+	            dto.setIsOverdue(false);
+	        }
+
 	        if (r.getInventory() != null && r.getInventory().getFilm() != null) {
 	            dto.setFilmTitle(r.getInventory().getFilm().getTitle());
 	        }
-	        dto.setStatus(r.getReturnDate() == null ? "RENTED" : "RETURNED");
 	        return dto;
 	    }
 

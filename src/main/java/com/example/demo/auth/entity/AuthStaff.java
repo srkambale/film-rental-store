@@ -5,6 +5,8 @@ package com.example.demo.auth.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 @Table(name = "staff")
 public class AuthStaff {
@@ -79,6 +81,7 @@ public class AuthStaff {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
+    @UpdateTimestamp
     public LocalDateTime getLastUpdate() { return lastUpdate; }
     public void setLastUpdate(LocalDateTime lastUpdate) { this.lastUpdate = lastUpdate; }
 }

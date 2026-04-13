@@ -13,7 +13,7 @@ import com.example.demo.customer.dto.RentalResponseDto;
 import com.example.demo.customer.service.CustomerService;
 
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/api/v1/customer")
 public class CustomerController {
 
     private CustomerService customerService;
@@ -26,6 +26,11 @@ public class CustomerController {
     @GetMapping("/{id}")
     public CustomerDto getCustomer(@PathVariable Long id) {
         return customerService.getCustomerById(id);
+    }
+
+    @PostMapping("")
+    public CustomerDto createCustomer(@jakarta.validation.Valid @RequestBody com.example.demo.customer.dto.CustomerCreateDto dto) {
+        return customerService.createCustomer(dto);
     }
 
     @PutMapping("/{id}")
@@ -48,5 +53,35 @@ public class CustomerController {
     @GetMapping("/{id}/payments")
     public List<PaymentDto> getPayments(@PathVariable Long id) {
         return customerService.getCustomerPayments(id);
+    }
+
+    @GetMapping("/search")
+    public List<CustomerDto> getCustomersByName(@RequestParam("name") String name) {
+        return customerService.getCustomersByName(name);
+    }
+
+    @GetMapping("/location")
+    public List<CustomerDto> getCustomersByLocation(@RequestParam("location") String location) {
+        return customerService.getCustomersByLocation(location);
+    }
+
+    @PatchMapping("/{id}")
+    public CustomerDto patchCustomer(@PathVariable Long id, @RequestBody CustomerUpdateDto dto) {
+        return customerService.patchCustomer(id, dto);
+    }
+
+    @PatchMapping("/{id}/address")
+    public AddressDto patchAddress(@PathVariable Long id, @RequestBody AddressDto dto) {
+        return customerService.patchAddress(id, dto);
+    }
+
+    @GetMapping("/{id}/payment/{paymentId}")
+    public PaymentDto getPaymentById(@PathVariable Long id, @PathVariable Long paymentId) {
+        return customerService.getCustomerPaymentById(id, paymentId);
+    }
+
+    @GetMapping("/{id}/rentals/{rentalId}")
+    public RentalResponseDto getRentalById(@PathVariable Long id, @PathVariable Long rentalId) {
+        return customerService.getCustomerRentalById(id, rentalId);
     }
 }

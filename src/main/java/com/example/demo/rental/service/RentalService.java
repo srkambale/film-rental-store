@@ -30,10 +30,10 @@ public class RentalService {
     public Rental createRental(Integer inventoryId, Integer customerId, Integer staffId) {
 
         Inventory inventory = inventoryRepository.findById(inventoryId)
-                .orElseThrow(() -> new RuntimeException("Inventory not found"));
+                .orElseThrow(() -> new com.example.demo.exception.ResourceNotFoundException("Inventory not found"));
 
         Customer customer = customerRepository.findById(Long.valueOf(customerId))
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new com.example.demo.exception.ResourceNotFoundException("Customer not found"));
 
         Rental rental = new Rental();
         rental.setInventory(inventory);
@@ -52,7 +52,7 @@ public class RentalService {
     // ✅ GET BY ID
     public Rental getRentalById(Integer id) {
         return rentalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rental not found"));
+                .orElseThrow(() -> new com.example.demo.exception.ResourceNotFoundException("Rental not found"));
     }
 
     // ✅ RETURN MOVIE
