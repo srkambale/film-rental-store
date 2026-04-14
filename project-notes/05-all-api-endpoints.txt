@@ -1,0 +1,506 @@
+====================================================
+  FILM RENTAL STORE - COMPLETE API ENDPOINTS
+  All 5 Modules
+  Base URL: http://localhost:8081
+====================================================
+
+HOW TO USE IN POSTMAN:
+  Step 1: Register or Login to get a JWT token
+  Step 2: Copy the "token" value from the response
+  Step 3: In every protected request add Header:
+          Key:   Authorization
+          Value: Bearer <paste_token_here>
+
+====================================================
+  MODULE 1: AUTH
+  Base: /api/auth
+  Access: ALL PUBLIC (no token needed)
+====================================================
+
+--------------------------------------------------
+1.1 REGISTER AS CUSTOMER
+--------------------------------------------------
+Method : POST
+URL    : http://localhost:8081/api/auth/register
+Headers: Content-Type: application/json
+
+Body:
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "password": "pass123",
+  "role": "CUSTOMER"
+}
+
+Success Response (201):
+{
+  "token": "eyJhbGci...",
+  "role": "CUSTOMER",
+  "identifier": "john@example.com"
+}
+
+--------------------------------------------------
+1.2 REGISTER AS STAFF
+--------------------------------------------------
+Method : POST
+URL    : http://localhost:8081/api/auth/register
+Headers: Content-Type: application/json
+
+Body:
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane@example.com",
+  "username": "jane.smith",
+  "password": "pass123",
+  "role": "STAFF",
+  "storeId": 1
+}
+
+--------------------------------------------------
+1.3 REGISTER AS ADMIN
+--------------------------------------------------
+Method : POST
+URL    : http://localhost:8081/api/auth/register
+Headers: Content-Type: application/json
+
+Body:
+{
+  "firstName": "Admin",
+  "lastName": "User",
+  "email": "admin@store.com",
+  "username": "admin",
+  "password": "admin123",
+  "role": "ADMIN",
+  "storeId": 1
+}
+
+--------------------------------------------------
+1.4 LOGIN
+--------------------------------------------------
+Method : POST
+URL    : http://localhost:8081/api/auth/login
+Headers: Content-Type: application/json
+
+Body (Customer - use email):
+{
+  "identifier": "john@example.com",
+  "password": "pass123"
+}
+
+Body (Staff/Admin - use username):
+{
+  "identifier": "jane.smith",
+  "password": "pass123"
+}
+
+Success Response (200):
+{
+  "token": "eyJhbGci...",
+  "role": "CUSTOMER",
+  "identifier": "john@example.com"
+}
+
+--------------------------------------------------
+1.5 GET CURRENT USER (who am I)
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/auth/me
+Headers: Authorization: Bearer <token>
+
+Response: "Logged in as: john@example.com | Roles: [ROLE_CUSTOMER]"
+
+====================================================
+  MODULE 2: CUSTOMER
+  Base: /api/customers  and  /api/customer
+  Access: ADMIN or CUSTOMER role
+====================================================
+
+--------------------------------------------------
+2.1 GET CUSTOMER BY ID
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/customers/1
+Headers: Authorization: Bearer <token>
+
+Response (200):
+{
+  "customerId": 1,
+  "firstName": "MARY",
+  "lastName": "SMITH",
+  "email": "mary.smith@sakilacustomer.org",
+  "active": true,
+  "address": {
+    "addressId": 5,
+    "address": "1913 Hanoi Way",
+    "district": "Nagasaki",
+    "postalCode": "35200",
+    "phone": "28303384290",
+    "city": "Sasebo",
+    "country": "Japan"
+  }
+}
+
+--------------------------------------------------
+2.2 UPDATE CUSTOMER PROFILE
+--------------------------------------------------
+Method : PUT
+URL    : http://localhost:8081/api/customers/1
+Headers: Authorization: Bearer <token>
+         Content-Type: application/json
+
+Body:
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "newemail@example.com"
+}
+
+--------------------------------------------------
+2.3 UPDATE CUSTOMER ADDRESS
+--------------------------------------------------
+Method : PUT
+URL    : http://localhost:8081/api/customers/1/address
+Headers: Authorization: Bearer <token>
+         Content-Type: application/json
+
+Body:
+{
+  "address": "123 Main Street",
+  "district": "California",
+  "postalCode": "90001",
+  "phone": "555-1234"
+}
+
+--------------------------------------------------
+2.4 GET CUSTOMER RENTALS
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/customers/1/rentals
+Headers: Authorization: Bearer <token>
+
+Response: List of rentals with film title, dates, status
+
+--------------------------------------------------
+2.5 GET CUSTOMER PAYMENTS
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/customers/1/payments
+Headers: Authorization: Bearer <token>
+
+Response: List of payments with amount and date
+
+--------------------------------------------------
+2.6 CREATE RENTAL (Customer rents a film)
+--------------------------------------------------
+Method : POST
+URL    : http://localhost:8081/api/customer/rentals
+Headers: Authorization: Bearer <token>
+         Content-Type: application/json
+
+Body:
+{
+  "customerId": 1,
+  "inventoryId": 1
+}
+
+====================================================
+  MODULE 3: FILM SEARCH
+  Base: /api/films
+  Access: Any authenticated user (any role)
+====================================================
+
+--------------------------------------------------
+3.1 SEARCH FILMS BY TITLE
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/films/search/title?title=academy
+Headers: Authorization: Bearer <token>
+
+Example searches:
+  ?title=ace
+  ?title=dragon
+  ?title=love
+
+--------------------------------------------------
+3.2 SEARCH FILMS BY ACTOR NAME
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/films/search/actor?actor=penelope
+Headers: Authorization: Bearer <token>
+
+Example searches:
+  ?actor=penelope
+  ?actor=nick
+  ?actor=ed
+
+--------------------------------------------------
+3.3 SEARCH FILMS BY CATEGORY
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/films/search/category?category=action
+Headers: Authorization: Bearer <token>
+
+Available categories in Sakila:
+  Action, Animation, Children, Classics, Comedy,
+  Documentary, Drama, Family, Foreign, Games,
+  Horror, Music, New, Sci-Fi, Sports, Travel
+
+====================================================
+  MODULE 4: STAFF
+  Base: /api/staff
+  Access: ADMIN or STAFF role
+====================================================
+
+--------------------------------------------------
+4.1 GET ALL STAFF
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/staff
+Headers: Authorization: Bearer <token>
+
+--------------------------------------------------
+4.2 GET STAFF BY ID
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/staff/1
+Headers: Authorization: Bearer <token>
+
+--------------------------------------------------
+4.3 CREATE NEW STAFF
+--------------------------------------------------
+Method : POST
+URL    : http://localhost:8081/api/staff
+Headers: Authorization: Bearer <token>
+         Content-Type: application/json
+
+Body:
+{
+  "firstName": "Bob",
+  "lastName": "Jones",
+  "email": "bob@store.com",
+  "username": "bob.jones",
+  "password": "pass123",
+  "storeId": 1,
+  "addressId": 1,
+  "active": true,
+  "phone": "555-9999",
+  "role": "STAFF"
+}
+
+--------------------------------------------------
+4.4 UPDATE STAFF
+--------------------------------------------------
+Method : PUT
+URL    : http://localhost:8081/api/staff/1
+Headers: Authorization: Bearer <token>
+         Content-Type: application/json
+
+Body: (same fields as POST, send only what you want to update)
+{
+  "firstName": "Bob",
+  "lastName": "Jones",
+  "email": "bob.updated@store.com",
+  "username": "bob.jones",
+  "password": "newpass123",
+  "storeId": 1,
+  "addressId": 1,
+  "active": true,
+  "phone": "555-0000",
+  "role": "STAFF"
+}
+
+--------------------------------------------------
+4.5 DELETE STAFF
+--------------------------------------------------
+Method : DELETE
+URL    : http://localhost:8081/api/staff/1
+Headers: Authorization: Bearer <token>
+
+Response: 200 OK (no body)
+
+====================================================
+  MODULE 5: RENTAL MANAGEMENT
+  Base: /api/rentals
+  Access: Any authenticated user
+====================================================
+
+--------------------------------------------------
+5.1 CREATE RENTAL (Staff side)
+--------------------------------------------------
+Method : POST
+URL    : http://localhost:8081/api/rentals?inventoryId=1&customerId=1&staffId=1
+Headers: Authorization: Bearer <token>
+
+Note: Parameters go in the URL, not the body
+Example:
+  http://localhost:8081/api/rentals?inventoryId=10&customerId=5&staffId=1
+
+--------------------------------------------------
+5.2 GET ALL RENTALS
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/rentals
+Headers: Authorization: Bearer <token>
+
+--------------------------------------------------
+5.3 GET RENTAL BY ID
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/rentals/1
+Headers: Authorization: Bearer <token>
+
+--------------------------------------------------
+5.4 RETURN A FILM (mark as returned)
+--------------------------------------------------
+Method : PUT
+URL    : http://localhost:8081/api/rentals/1/return
+Headers: Authorization: Bearer <token>
+
+Response: Updated rental with returnDate set to now
+
+--------------------------------------------------
+5.5 DELETE RENTAL
+--------------------------------------------------
+Method : DELETE
+URL    : http://localhost:8081/api/rentals/1
+Headers: Authorization: Bearer <token>
+
+Response: "Rental deleted successfully"
+
+====================================================
+  MODULE 5b: INVENTORY MANAGEMENT
+  Base: /api/inventory
+  Access: Any authenticated user
+====================================================
+
+--------------------------------------------------
+5.6 GET ALL INVENTORY
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/inventory
+Headers: Authorization: Bearer <token>
+
+--------------------------------------------------
+5.7 GET INVENTORY BY ID
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/inventory/1
+Headers: Authorization: Bearer <token>
+
+--------------------------------------------------
+5.8 GET ALL COPIES OF A FILM (all stores)
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/inventory/film/1
+Headers: Authorization: Bearer <token>
+
+Example: /api/inventory/film/10  (all copies of film ID 10)
+
+--------------------------------------------------
+5.9 GET ALL INVENTORY AT A STORE
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/inventory/store/1
+Headers: Authorization: Bearer <token>
+
+Example: /api/inventory/store/2  (all films at store 2)
+
+--------------------------------------------------
+5.10 GET AVAILABLE COPIES (not currently rented)
+--------------------------------------------------
+Method : GET
+URL    : http://localhost:8081/api/inventory/available?filmId=1&storeId=1
+Headers: Authorization: Bearer <token>
+
+Example: /api/inventory/available?filmId=10&storeId=1
+
+--------------------------------------------------
+5.11 ADD NEW INVENTORY ITEM
+--------------------------------------------------
+Method : POST
+URL    : http://localhost:8081/api/inventory
+Headers: Authorization: Bearer <token>
+         Content-Type: application/json
+
+Body:
+{
+  "filmId": 1,
+  "storeId": 1
+}
+
+--------------------------------------------------
+5.12 DELETE INVENTORY ITEM
+--------------------------------------------------
+Method : DELETE
+URL    : http://localhost:8081/api/inventory/1
+Headers: Authorization: Bearer <token>
+
+Note: Will fail if the item is currently rented out
+
+====================================================
+  ROLE PERMISSIONS QUICK REFERENCE
+====================================================
+
+  Endpoint Pattern         | ADMIN | STAFF | CUSTOMER
+  -------------------------|-------|-------|----------
+  /api/auth/**             |  YES  |  YES  |   YES   (public)
+  /api/films/**            |  YES  |  YES  |   YES
+  /api/rentals/**          |  YES  |  YES  |   YES
+  /api/inventory/**        |  YES  |  YES  |   YES
+  /api/staff/**            |  YES  |  YES  |   NO
+  /api/customers/**        |  YES  |  NO   |   YES
+  /api/customer/rentals    |  YES  |  NO   |   YES
+  /api/admin/**            |  YES  |  NO   |   NO    (not built yet)
+
+====================================================
+  QUICK TEST SEQUENCE IN POSTMAN
+====================================================
+
+1. Register a customer:
+   POST /api/auth/register  (role: CUSTOMER)
+
+2. Login:
+   POST /api/auth/login
+   -> Copy the "token" from response
+
+3. Search films:
+   GET /api/films/search/title?title=ace
+   Header: Authorization: Bearer <token>
+
+4. Check available inventory:
+   GET /api/inventory/available?filmId=1&storeId=1
+   Header: Authorization: Bearer <token>
+
+5. Rent a film:
+   POST /api/customer/rentals
+   Body: { "customerId": 1, "inventoryId": 1 }
+   Header: Authorization: Bearer <token>
+
+6. View your rentals:
+   GET /api/customers/1/rentals
+   Header: Authorization: Bearer <token>
+
+7. Register a staff member:
+   POST /api/auth/register  (role: STAFF)
+
+8. Login as staff:
+   POST /api/auth/login  (use username)
+   -> Copy new token
+
+9. Return a film:
+   PUT /api/rentals/1/return
+   Header: Authorization: Bearer <token>
+
+====================================================
+  SAMPLE DATA IN SAKILA (useful IDs for testing)
+====================================================
+
+  customer_id : 1 to 599
+  staff_id    : 1 or 2  (only 2 staff in Sakila)
+  film_id     : 1 to 1000
+  inventory_id: 1 to 4581
+  store_id    : 1 or 2  (only 2 stores in Sakila)
+
+====================================================
