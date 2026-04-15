@@ -52,7 +52,7 @@ public class CustomerRentalServiceImpl implements CustomerRentalService {
         rental.setCustomer(customer);
         rental.setInventory(inventory);
         rental.setRentalDate(LocalDateTime.now());
-        rental.setStaffId(1L); // default staff, update as needed
+        rental.setStaffId(1); // default staff, update as needed
         rental.setLastUpdate(LocalDateTime.now());
 
         CustomerRental saved = rentalRepository.save(rental);
@@ -61,7 +61,7 @@ public class CustomerRentalServiceImpl implements CustomerRentalService {
     }
 
     @Override
-    public List<RentalResponseDto> getRentalsByCustomer(Long customerId) {
+    public List<RentalResponseDto> getRentalsByCustomer(Integer customerId) {
 
         List<CustomerRental> rentals = rentalRepository.findByCustomerId(customerId);
 
@@ -71,7 +71,7 @@ public class CustomerRentalServiceImpl implements CustomerRentalService {
     }
 
     @Override
-    public RentalResponseDto returnFilm(Long rentalId) {
+    public RentalResponseDto returnFilm(Integer rentalId) {
         CustomerRental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new CustomerResourceNotFoundException("Rental not found"));
 

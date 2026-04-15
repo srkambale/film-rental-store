@@ -3,17 +3,17 @@ package com.example.demo.customer.dto;
 import java.time.LocalDateTime;
 
 public class RentalResponseDto {
-    private Long rentalId;
+    private Integer rentalId;
     private String filmTitle;
     private LocalDateTime rentalDate;
     private LocalDateTime returnDate;
     private String status;
     private Boolean isOverdue;
 
-	public Long getRentalId() {
+	public Integer getRentalId() {
 		return rentalId;
 	}
-	public void setRentalId(Long rentalId) {
+	public void setRentalId(Integer rentalId) {
 		this.rentalId = rentalId;
 	}
 	public String getFilmTitle() {

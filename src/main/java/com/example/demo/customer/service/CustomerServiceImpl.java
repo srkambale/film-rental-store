@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 	    @Override
-	    public CustomerDto getCustomerById(Long id) {
+	    public CustomerDto getCustomerById(Integer id) {
 	        Customer customer = customerRepository.findById(id)
 	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
 
@@ -59,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public CustomerDto updateCustomer(Long id, CustomerUpdateDto dto) {
+	    public CustomerDto updateCustomer(Integer id, CustomerUpdateDto dto) {
 	        Customer customer = customerRepository.findById(id)
 	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
 
@@ -71,7 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public AddressDto updateAddress(Long customerId, AddressDto dto) {
+	    public AddressDto updateAddress(Integer customerId, AddressDto dto) {
 	        Customer customer = customerRepository.findById(customerId)
 	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
 
@@ -85,7 +85,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public List<RentalResponseDto> getCustomerRentals(Long customerId) {
+	    public List<RentalResponseDto> getCustomerRentals(Integer customerId) {
 	        List<CustomerRental> rentals = rentalRepository.findByCustomerId(customerId);
 
 	        return rentals.stream()
@@ -94,7 +94,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public List<PaymentDto> getCustomerPayments(Long customerId) {
+	    public List<PaymentDto> getCustomerPayments(Integer customerId) {
 	        List<Payment> payments = paymentRepository.findByCustomerId(customerId);
 
 	        return payments.stream()
@@ -120,7 +120,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public CustomerDto patchCustomer(Long id, CustomerUpdateDto dto) {
+	    public CustomerDto patchCustomer(Integer id, CustomerUpdateDto dto) {
 	        Customer customer = customerRepository.findById(id)
 	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
 
@@ -132,7 +132,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public AddressDto patchAddress(Long customerId, AddressDto dto) {
+	    public AddressDto patchAddress(Integer customerId, AddressDto dto) {
 	        Customer customer = customerRepository.findById(customerId)
 	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
 
@@ -147,14 +147,14 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public PaymentDto getCustomerPaymentById(Long customerId, Long paymentId) {
+	    public PaymentDto getCustomerPaymentById(Integer customerId, Integer paymentId) {
 	        Payment payment = paymentRepository.findByCustomerIdAndPaymentId(customerId, paymentId)
 	                .orElseThrow(() -> new CustomerResourceNotFoundException("Payment not found"));
 	        return mapToPaymentDto(payment);
 	    }
 
 	    @Override
-	    public RentalResponseDto getCustomerRentalById(Long customerId, Long rentalId) {
+	    public RentalResponseDto getCustomerRentalById(Integer customerId, Integer rentalId) {
 	        CustomerRental rental = rentalRepository.fetchByCustomerIdAndRentalId(customerId, rentalId)
 	                .orElseThrow(() -> new CustomerResourceNotFoundException("Rental not found"));
 	        return mapToRentalDto(rental);
