@@ -3,15 +3,15 @@ package com.example.demo.customer.dto;
 import java.math.BigDecimal;
 
 public class FilmSearchDto {
-    private Long filmId;
+    private Integer filmId;
     private String title;
     private String description;
     private String rating;
     private BigDecimal rentalRate;
-	public Long getFilmId() {
+	public Integer getFilmId() {
 		return filmId;
 	}
-	public void setFilmId(Long filmId) {
+	public void setFilmId(Integer filmId) {
 		this.filmId = filmId;
 	}
 	public String getTitle() {

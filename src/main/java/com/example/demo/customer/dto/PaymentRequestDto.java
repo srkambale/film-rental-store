@@ -7,8 +7,8 @@ import java.math.BigDecimal;
  */
 public class PaymentRequestDto {
 
-    private Long customerId;
-    private Long rentalId;
+    private Integer customerId;
+    private Integer rentalId;
     private BigDecimal amount;
 
     // Default staff ID used for mock/dummy payment processing
@@ -16,11 +16,11 @@ public class PaymentRequestDto {
 
     public PaymentRequestDto() {}
 
-    public Long getCustomerId() { return customerId; }
-    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+    public Integer getCustomerId() { return customerId; }
+    public void setCustomerId(Integer customerId) { this.customerId = customerId; }
 
-    public Long getRentalId() { return rentalId; }
-    public void setRentalId(Long rentalId) { this.rentalId = rentalId; }
+    public Integer getRentalId() { return rentalId; }
+    public void setRentalId(Integer rentalId) { this.rentalId = rentalId; }
 
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }

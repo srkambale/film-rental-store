@@ -42,16 +42,16 @@ class PaymentServiceImplTest {
     void processPayment_Success() {
         // 1. Arrange
         PaymentRequestDto request = new PaymentRequestDto();
-        request.setCustomerId(1L);
-        request.setRentalId(100L);
+        request.setCustomerId(1);
+        request.setRentalId(100);
         request.setAmount(new BigDecimal("50.00"));
 
         Customer mockCustomer = new Customer();
         CustomerRental mockRental = new CustomerRental();
-        mockRental.setRentalId(100L);
+        mockRental.setRentalId(100);
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(mockCustomer));
-        when(rentalRepository.fetchByCustomerIdAndRentalId(1L, 100L)).thenReturn(Optional.of(mockRental));
+        when(customerRepository.findById(1)).thenReturn(Optional.of(mockCustomer));
+        when(rentalRepository.fetchByCustomerIdAndRentalId(1, 100)).thenReturn(Optional.of(mockRental));
         when(paymentRepository.findAll()).thenReturn(Collections.emptyList()); // No duplicate
         when(paymentRepository.save(any(Payment.class))).thenAnswer(i -> i.getArguments()[0]);
 
@@ -69,11 +69,11 @@ class PaymentServiceImplTest {
     void processPayment_CustomerNotFound() {
         // Arrange
         PaymentRequestDto request = new PaymentRequestDto();
-        request.setCustomerId(1L);
-        request.setRentalId(100L);
+        request.setCustomerId(1);
+        request.setRentalId(100);
         request.setAmount(new BigDecimal("10.00"));
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(customerRepository.findById(1)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(CustomerResourceNotFoundException.class, () -> {

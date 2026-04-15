@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 public class PaymentResponseDto {
 
     private Integer paymentId;
-    private Long customerId;
+    private Integer customerId;
     private Integer staffId;
-    private Long rentalId;
+    private Integer rentalId;
     private BigDecimal amount;
     private LocalDateTime paymentDate;
     private String status;
@@ -24,14 +24,14 @@ public class PaymentResponseDto {
     public Integer getPaymentId() { return paymentId; }
     public void setPaymentId(Integer paymentId) { this.paymentId = paymentId; }
 
-    public Long getCustomerId() { return customerId; }
-    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+    public Integer getCustomerId() { return customerId; }
+    public void setCustomerId(Integer customerId) { this.customerId = customerId; }
 
     public Integer getStaffId() { return staffId; }
     public void setStaffId(Integer staffId) { this.staffId = staffId; }
 
-    public Long getRentalId() { return rentalId; }
-    public void setRentalId(Long rentalId) { this.rentalId = rentalId; }
+    public Integer getRentalId() { return rentalId; }
+    public void setRentalId(Integer rentalId) { this.rentalId = rentalId; }
 
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }

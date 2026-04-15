@@ -48,8 +48,8 @@ public class CustomerRental {
     }
 
     // Getters and Setters
-    public Long getRentalId() { return rentalId != null ? rentalId.longValue() : null; }
-    public void setRentalId(Long rentalId) { this.rentalId = rentalId != null ? rentalId.intValue() : null; }
+    public Integer getRentalId() { return rentalId; }
+    public void setRentalId(Integer rentalId) { this.rentalId = rentalId; }
 
     public LocalDateTime getRentalDate() { return rentalDate; }
     public void setRentalDate(LocalDateTime rentalDate) { this.rentalDate = rentalDate; }
@@ -63,8 +63,8 @@ public class CustomerRental {
     public LocalDateTime getReturnDate() { return returnDate; }
     public void setReturnDate(LocalDateTime returnDate) { this.returnDate = returnDate; }
 
-    public Long getStaffId() { return staffId != null ? staffId.longValue() : null; }
-    public void setStaffId(Long staffId) { this.staffId = staffId != null ? staffId.intValue() : null; }
+    public Integer getStaffId() { return staffId; }
+    public void setStaffId(Integer staffId) { this.staffId = staffId; }
 
     public LocalDateTime getLastUpdate() { return lastUpdate; }
     public void setLastUpdate(LocalDateTime lastUpdate) { this.lastUpdate = lastUpdate; }
