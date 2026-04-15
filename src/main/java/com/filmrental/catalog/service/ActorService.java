@@ -1,14 +1,15 @@
 package com.filmrental.catalog.service;
 
-import com.filmrental.catalog.dto.ActorDto;
-import com.filmrental.catalog.entity.Actor;
-import com.filmrental.catalog.repository.ActorRepository;
-import com.filmrental.common.exception.ResourceNotFoundException;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.exception.ResourceNotFoundException;
+import com.filmrental.catalog.dto.ActorDto;
+import com.filmrental.catalog.entity.Actor;
+import com.filmrental.catalog.repository.ActorRepository;
 
 @Service
 public class ActorService {
