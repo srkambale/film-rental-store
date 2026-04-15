@@ -9,7 +9,7 @@ import com.example.demo.customer.dto.FilmSearchDto;
 import com.example.demo.customer.service.FilmService;
 
 @RestController
-@RequestMapping("/api/films")
+@RequestMapping("/api/v1/films")
 public class FilmController {
 
     private FilmService filmService;

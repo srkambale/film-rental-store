@@ -8,7 +8,7 @@ import com.example.demo.customer.dto.RentalResponseDto;
 import com.example.demo.customer.service.CustomerRentalService;
 
 @RestController
-@RequestMapping("/api/customer/rentals")
+@RequestMapping("/api/v1/customer/rentals")
 public class CustomerRentalController {
 
     private CustomerRentalService rentalService;
@@ -21,5 +21,10 @@ public class CustomerRentalController {
     @PostMapping
     public RentalResponseDto createRental(@RequestBody RentalRequestDto request) {
         return rentalService.createRental(request);
+    }
+
+    @PutMapping("/{rentalId}/return")
+    public RentalResponseDto returnFilm(@PathVariable Long rentalId) {
+        return rentalService.returnFilm(rentalId);
     }
 }

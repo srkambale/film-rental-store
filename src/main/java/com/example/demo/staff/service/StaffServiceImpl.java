@@ -1,7 +1,7 @@
 package com.example.demo.staff.service;
 
 import com.example.demo.staff.entity.Staff;
-import com.example.demo.staff.exception.ResourceNotFoundException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.staff.repository.StaffRepository;
 
 import java.util.List;

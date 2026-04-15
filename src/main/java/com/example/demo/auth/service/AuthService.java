@@ -67,7 +67,7 @@ public class AuthService {
                         userAuthRepository
                                 .findByEmail(request.getIdentifier())
                                 .orElseThrow(() ->
-                                        new RuntimeException("User not found"))
+                                        new com.example.demo.exception.ResourceNotFoundException("User not found"))
                 );
 
         String role  = userAuth.getRole().name();
@@ -94,7 +94,7 @@ public class AuthService {
             else if ("authstaff".equalsIgnoreCase(roleInput)) role = UserAuth.Role.STAFF;
         }
         if (role == null) {
-            throw new RuntimeException("Invalid role: " + roleInput + ". Valid values: ADMIN, STAFF, CUSTOMER");
+            throw new com.example.demo.exception.BadRequestException("Invalid role: " + roleInput + ". Valid values: ADMIN, STAFF, CUSTOMER");
         }
 
         if (role == UserAuth.Role.CUSTOMER) {
@@ -108,7 +108,7 @@ public class AuthService {
     private AuthResponse registerCustomer(RegisterRequest request) {
 
         if (userAuthRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException(
+            throw new com.example.demo.exception.BadRequestException(
                     "Email already registered: " + request.getEmail());
         }
 
@@ -149,17 +149,17 @@ public class AuthService {
                                        UserAuth.Role role) {
 
         if (request.getUsername() == null || request.getUsername().isBlank()) {
-            throw new RuntimeException(
+            throw new com.example.demo.exception.BadRequestException(
                     "Username is required for AuthStaff/ADMIN");
         }
 
         if (userAuthRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException(
+            throw new com.example.demo.exception.BadRequestException(
                     "Username already taken: " + request.getUsername());
         }
 
         if (request.getStoreId() == null) {
-            throw new RuntimeException(
+            throw new com.example.demo.exception.BadRequestException(
                     "storeId is required for AuthStaff/ADMIN");
         }
 

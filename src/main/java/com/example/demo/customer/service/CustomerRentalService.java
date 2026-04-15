@@ -9,4 +9,6 @@ public interface CustomerRentalService {
     RentalResponseDto createRental(RentalRequestDto request);
 
     List<RentalResponseDto> getRentalsByCustomer(Long customerId);
+
+    RentalResponseDto returnFilm(Long rentalId);
 }

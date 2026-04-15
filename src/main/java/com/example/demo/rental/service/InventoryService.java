@@ -19,7 +19,7 @@ public class InventoryService {
     private final RentalRepository rentalRepository;
 
     public InventoryService(InventoryRepository inventoryRepository,
-                            RentalRepository rentalRepository) {
+            RentalRepository rentalRepository) {
         this.inventoryRepository = inventoryRepository;
         this.rentalRepository = rentalRepository;
     }
@@ -34,8 +34,7 @@ public class InventoryService {
     public InventoryDto getInventoryById(Integer id) {
         return inventoryRepository.findById(id)
                 .map(this::toDto)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Inventory item not found with id: " + id));
+                .orElseThrow(() -> new com.example.demo.exception.ResourceNotFoundException("Inventory item not found with id: " + id));
     }
 
     // ─── Get by film ──────────────────────────────────────────────────────────
@@ -70,14 +69,12 @@ public class InventoryService {
     // ─── Delete inventory item ────────────────────────────────────────────────
     public void deleteInventory(Integer id) {
         if (!inventoryRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Inventory item not found with id: " + id);
+            throw new com.example.demo.exception.ResourceNotFoundException("Inventory item not found with id: " + id);
         }
         // Prevent deletion if currently rented
         boolean currentlyRented = rentalRepository.existsByInventory_InventoryIdAndReturnDateIsNull(id);
         if (currentlyRented) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Cannot delete inventory item that is currently rented out");
+            throw new com.example.demo.exception.BadRequestException("Cannot delete inventory item that is currently rented out");
         }
         inventoryRepository.deleteById(id);
     }

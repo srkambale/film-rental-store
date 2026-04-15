@@ -1,0 +1,384 @@
+{
+	"info": {
+		"name": "Film Rental - Customer Module v1",
+		"description": "Ready-to-use Postman collection for all v1 endpoints in the Customer Service module running on port 8081.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0. Create New Customer (POST)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"JANE\",\n    \"lastName\": \"DOE\",\n    \"email\": \"jane.doe@sakila.org\",\n    \"storeId\": 1,\n    \"addressId\": 1\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer"
+					]
+				}
+			}
+		},
+		{
+			"name": "1. Get Customer by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1"
+					]
+				}
+			}
+		},
+		{
+			"name": "2. Update Customer Profile (PUT)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"JOHN\",\n    \"lastName\": \"DOE\",\n    \"email\": \"john.doe@sakilacustomer.org\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1"
+					]
+				}
+			}
+		},
+		{
+			"name": "3. Patch Customer Profile (PATCH)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"updated.email@sakila.org\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1"
+					]
+				}
+			}
+		},
+		{
+			"name": "4. Update Customer Address (PUT)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"address\": \"123 New Main St\",\n    \"district\": \"Alberta\",\n    \"postalCode\": \"75241\",\n    \"phone\": \"123456789\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1/address",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1",
+						"address"
+					]
+				}
+			}
+		},
+		{
+			"name": "5. Patch Customer Address (PATCH)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"postalCode\": \"99999\",\n    \"phone\": \"987654321\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1/address",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1",
+						"address"
+					]
+				}
+			}
+		},
+		{
+			"name": "6. Search Customers By Name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/search?name=Mary",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Mary"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "7. Search Customers By Location",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/location?location=Alberta",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"location"
+					],
+					"query": [
+						{
+							"key": "location",
+							"value": "Alberta"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "8. Get All Customer Rentals",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1/rentals",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1",
+						"rentals"
+					]
+				}
+			}
+		},
+		{
+			"name": "9. Get Specific Rental By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1/rentals/100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1",
+						"rentals",
+						"100"
+					]
+				}
+			}
+		},
+		{
+			"name": "10. Get All Customer Payments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1/payments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1",
+						"payments"
+					]
+				}
+			}
+		},
+		{
+			"name": "11. Get Specific Payment By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/1/payment/50",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"1",
+						"payment",
+						"50"
+					]
+				}
+			}
+		},
+		{
+			"name": "12. Rent a Film (Checkout)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerId\": 1,\n    \"inventoryId\": 15\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/rentals",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"rentals"
+					]
+				}
+			}
+		},
+		{
+			"name": "13. Return a Rented Film",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/customer/rentals/1/return",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"customer",
+						"rentals",
+						"1",
+						"return"
+					]
+				}
+			}
+		}
+	]
+}
