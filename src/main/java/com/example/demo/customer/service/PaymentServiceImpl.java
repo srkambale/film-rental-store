@@ -177,10 +177,15 @@ public class PaymentServiceImpl implements PaymentService {
         dto.setPaymentId(p.getPaymentId());
         dto.setCustomerId(p.getCustomerId() != null ? p.getCustomerId().longValue() : null);
         dto.setStaffId(p.getStaffId());
-        dto.setRentalId(p.getRental() != null ? p.getRental().getRentalId() : null);
+
+        Long rentalId = p.getRental() != null ? p.getRental().getRentalId() : null;
+        dto.setRentalId(rentalId);
+
         dto.setAmount(p.getAmount());
         dto.setPaymentDate(p.getPaymentDate());
         dto.setStatus("SUCCESS");
+        dto.setMessage("Payment of " + p.getAmount()
+                + " processed successfully for rental ID: " + rentalId);
         return dto;
     }
 }
