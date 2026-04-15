@@ -44,6 +44,7 @@ public class AuthStaff {
     @Column(name = "password", length = 255)
     private String password;
 
+    @UpdateTimestamp
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
 

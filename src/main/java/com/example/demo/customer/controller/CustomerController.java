@@ -29,19 +29,20 @@ public class CustomerController {
     }
 
     @PostMapping("")
-    public CustomerDto createCustomer(@jakarta.validation.Valid @RequestBody com.example.demo.customer.dto.CustomerCreateDto dto) {
+    public CustomerDto createCustomer(
+            @jakarta.validation.Valid @RequestBody com.example.demo.customer.dto.CustomerCreateDto dto) {
         return customerService.createCustomer(dto);
     }
 
     @PutMapping("/{id}")
     public CustomerDto updateCustomer(@PathVariable Long id,
-                                      @RequestBody CustomerUpdateDto dto) {
+            @RequestBody CustomerUpdateDto dto) {
         return customerService.updateCustomer(id, dto);
     }
 
     @PutMapping("/{id}/address")
     public AddressDto updateAddress(@PathVariable Long id,
-                                   @RequestBody AddressDto dto) {
+            @RequestBody AddressDto dto) {
         return customerService.updateAddress(id, dto);
     }
 

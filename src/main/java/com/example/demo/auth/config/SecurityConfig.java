@@ -29,9 +29,9 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     public SecurityConfig(UserDetailsServiceImpl userDetailsService,
-                          JwtAuthenticationFilter jwtAuthFilter) {
+            JwtAuthenticationFilter jwtAuthFilter) {
         this.userDetailsService = userDetailsService;
-        this.jwtAuthFilter      = jwtAuthFilter;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean
@@ -39,34 +39,30 @@ public class SecurityConfig {
             throws Exception {
 
         http
-            .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
 
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.setContentType("application/json");
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write(
-                        "{\"error\": \"Unauthorized\", \"message\": \""
-                        + authException.getMessage() + "\"}"
-                    );
-                })
-            )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write(
+                                    "{\"error\": \"Unauthorized\", \"message\": \""
+                                            + authException.getMessage() + "\"}");
+                        }))
 
-            .authorizeHttpRequests(auth -> auth
-            		.requestMatchers("/api/v1/auth/**").permitAll()
-            	    .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
-            	    .requestMatchers("/api/v1/staff/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
-            	    .requestMatchers("/api/v1/customer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CUSTOMER")
-            	    .anyRequest().authenticated()
-            	)
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/v1/staff/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
+                        .requestMatchers("/api/v1/customer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CUSTOMER")
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            .authenticationProvider(authenticationProvider())
+                .authenticationProvider(authenticationProvider())
 
-            .addFilterBefore(jwtAuthFilter,
-                    UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

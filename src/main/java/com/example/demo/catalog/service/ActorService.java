@@ -1,4 +1,4 @@
-package com.filmrental.catalog.service;
+package com.example.demo.catalog.service;
 
 import com.example.demo.catalog.dto.ActorDto;
 import com.example.demo.catalog.entity.Actor;
