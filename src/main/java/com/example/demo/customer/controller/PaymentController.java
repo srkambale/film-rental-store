@@ -76,7 +76,7 @@ public class PaymentController {
     /**
      * Retrieve the payment associated with a specific rental.
      */
-    @GetMapping("/rental/{rentalId}")
+    @GetMapping("/rentals/{rentalId}")
     public ResponseEntity<PaymentResponseDto> getPaymentByRental(
             @PathVariable Long rentalId) {
         PaymentResponseDto payment = paymentService.getPaymentByRental(rentalId);
