@@ -51,6 +51,7 @@ public class SecurityConfig {
                         }))
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/endpoints/**", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/v1/staff/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
