@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.customer.dto.RentalRequestDto;
 import com.example.demo.customer.dto.RentalResponseDto;
-import com.example.demo.customer.exception.CustomerResourceNotFoundException;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.customer.model.Customer;
 import com.example.demo.customer.model.CustomerInventory;
 import com.example.demo.customer.model.CustomerRental;
@@ -38,14 +39,14 @@ public class CustomerRentalServiceImpl implements CustomerRentalService {
     public RentalResponseDto createRental(RentalRequestDto request) {
 
         Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         CustomerInventory inventory = inventoryRepository.findById(request.getInventoryId())
-                .orElseThrow(() -> new CustomerResourceNotFoundException("Inventory not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found"));
 
         long activeRentals = rentalRepository.countActiveRentalsByInventoryId(inventory.getInventoryId());
         if (activeRentals > 0) {
-            throw new com.example.demo.customer.exception.CustomerBadRequestException("Film is currently not available in the store as it is already rented out.");
+            throw new BadRequestException("Film is currently not available in the store as it is already rented out.");
         }
 
         CustomerRental rental = new CustomerRental();
@@ -73,10 +74,10 @@ public class CustomerRentalServiceImpl implements CustomerRentalService {
     @Override
     public RentalResponseDto returnFilm(Integer rentalId) {
         CustomerRental rental = rentalRepository.findById(rentalId)
-                .orElseThrow(() -> new CustomerResourceNotFoundException("Rental not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rental not found"));
 
         if (rental.getReturnDate() != null) {
-            throw new com.example.demo.customer.exception.CustomerBadRequestException("Film is already returned.");
+            throw new BadRequestException("Film is already returned.");
         }
 
         rental.setReturnDate(LocalDateTime.now());

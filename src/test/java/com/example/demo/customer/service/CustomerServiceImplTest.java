@@ -6,7 +6,7 @@ import static org.mockito.Mockito.*;
 import java.util.Optional;
 
 import com.example.demo.customer.dto.*;
-import com.example.demo.customer.exception.CustomerResourceNotFoundException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.customer.model.*;
 import com.example.demo.customer.repository.*;
 
@@ -94,7 +94,7 @@ class CustomerServiceImplTest {
         when(customerRepository.findById(1))
                 .thenReturn(Optional.empty());
 
-        assertThrows(CustomerResourceNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             customerService.getCustomerById(1);
         });
     }
@@ -147,7 +147,7 @@ class CustomerServiceImplTest {
         when(addressRepository.findById(10L))
                 .thenReturn(Optional.empty());
 
-        assertThrows(CustomerResourceNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             customerService.createCustomer(dto);
         });
     }
