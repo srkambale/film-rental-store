@@ -40,10 +40,10 @@ class RentalServiceTest {
         inventory.setInventoryId(1);
 
         Customer customer = new Customer();
-        customer.setCustomerId((int) 1L);
+        customer.setCustomerId(1);
 
         when(inventoryRepository.findById(1)).thenReturn(Optional.of(inventory));
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
         when(rentalRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Rental result = rentalService.createRental(1, 1, 100);

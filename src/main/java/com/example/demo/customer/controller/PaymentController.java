@@ -46,7 +46,7 @@ public class PaymentController {
      */
     @GetMapping("/my")
     public ResponseEntity<List<PaymentResponseDto>> getMyPayments(
-            @RequestParam Long customerId) {
+            @RequestParam Integer customerId) {
         List<PaymentResponseDto> payments = paymentService.getPaymentsByCustomer(customerId);
         return ResponseEntity.ok(payments);
     }
@@ -56,7 +56,7 @@ public class PaymentController {
      * Retrieve a single payment by its primary key.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentResponseDto> getPaymentById(@PathVariable Long id) {
+    public ResponseEntity<PaymentResponseDto> getPaymentById(@PathVariable Integer id) {
         PaymentResponseDto payment = paymentService.getPaymentById(id);
         return ResponseEntity.ok(payment);
     }
@@ -67,7 +67,7 @@ public class PaymentController {
      */
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<PaymentResponseDto>> getPaymentsByCustomer(
-            @PathVariable Long customerId) {
+            @PathVariable Integer customerId) {
         List<PaymentResponseDto> payments = paymentService.getPaymentsByCustomer(customerId);
         return ResponseEntity.ok(payments);
     }
@@ -78,7 +78,7 @@ public class PaymentController {
      */
     @GetMapping("/rentals/{rentalId}")
     public ResponseEntity<PaymentResponseDto> getPaymentByRental(
-            @PathVariable Long rentalId) {
+            @PathVariable Integer rentalId) {
         PaymentResponseDto payment = paymentService.getPaymentByRental(rentalId);
         return ResponseEntity.ok(payment);
     }
@@ -89,7 +89,7 @@ public class PaymentController {
      */
     @GetMapping("/balance/{customerId}")
     public ResponseEntity<Map<String, Object>> getCustomerBalance(
-            @PathVariable Long customerId) {
+            @PathVariable Integer customerId) {
         BigDecimal balance = paymentService.getCustomerBalance(customerId);
         return ResponseEntity.ok(Map.of(
                 "customerId", customerId,

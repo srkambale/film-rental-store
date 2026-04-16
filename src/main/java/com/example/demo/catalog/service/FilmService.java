@@ -6,10 +6,9 @@ import com.example.demo.catalog.dto.FilmDto;
 import com.example.demo.catalog.dto.FilmSummaryDto;
 import com.example.demo.catalog.entity.Film;
 import com.example.demo.catalog.repository.FilmRepository;
-import org.springframework.http.HttpStatus;
+import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Set;
@@ -87,7 +86,7 @@ public class FilmService {
     public FilmDto getFilmById(Long id) {
         return filmRepository.findById(id)
                 .map(this::mapToDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found"));
     }
 
     private FilmSummaryDto mapToSummaryDto(Film film) {

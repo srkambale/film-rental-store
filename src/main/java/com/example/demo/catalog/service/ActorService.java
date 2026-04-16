@@ -3,10 +3,9 @@ package com.example.demo.catalog.service;
 import com.example.demo.catalog.dto.ActorDto;
 import com.example.demo.catalog.entity.Actor;
 import com.example.demo.catalog.repository.ActorRepository;
-import org.springframework.http.HttpStatus;
+import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +30,7 @@ public class ActorService {
     public ActorDto getActorById(Long id) {
         return actorRepository.findById(id)
                 .map(this::mapToDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Actor not found"));
     }
 
     @Transactional
@@ -46,7 +45,7 @@ public class ActorService {
     @Transactional
     public ActorDto updateActor(Long id, ActorDto dto) {
         Actor actor = actorRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Actor not found"));
         actor.setFirstName(dto.firstName());
         actor.setLastName(dto.lastName());
         return mapToDto(actorRepository.save(actor));
@@ -55,7 +54,7 @@ public class ActorService {
     @Transactional
     public void deleteActor(Long id) {
         if (!actorRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found");
+            throw new ResourceNotFoundException("Actor not found");
         }
         actorRepository.deleteById(id);
     }

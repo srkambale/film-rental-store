@@ -86,7 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 5. Build and persist Payment entity (mock: always succeeds)
         Payment payment = new Payment();
-        payment.setCustomerId(request.getCustomerId().intValue());
+        payment.setCustomerId(request.getCustomerId());
         payment.setStaffId(request.getStaffId() != null ? request.getStaffId() : 1);
         payment.setRental(rental);
         payment.setAmount(request.getAmount());
@@ -114,17 +114,17 @@ public class PaymentServiceImpl implements PaymentService {
     // ─── Fetch Payment by ID ─────────────────────────────────────────────────
 
     @Override
-    public PaymentResponseDto getPaymentById(Long paymentId) {
+    public PaymentResponseDto getPaymentById(Integer paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new CustomerResourceNotFoundException(
-                        "Payment not found with ID: " + paymentId));
+                         "Payment not found with ID: " + paymentId));
         return mapToDto(payment);
     }
 
     // ─── Fetch Payments by Customer ──────────────────────────────────────────
 
     @Override
-    public List<PaymentResponseDto> getPaymentsByCustomer(Long customerId) {
+    public List<PaymentResponseDto> getPaymentsByCustomer(Integer customerId) {
         // Verify customer exists before querying
         customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerResourceNotFoundException(
@@ -139,7 +139,7 @@ public class PaymentServiceImpl implements PaymentService {
     // ─── Fetch Payment by Rental ─────────────────────────────────────────────
 
     @Override
-    public PaymentResponseDto getPaymentByRental(Long rentalId) {
+    public PaymentResponseDto getPaymentByRental(Integer rentalId) {
         // Verify rental exists
         rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new CustomerResourceNotFoundException(
@@ -158,7 +158,7 @@ public class PaymentServiceImpl implements PaymentService {
     // ─── Get Customer Balance (total spent) ───────────────────────────────────
 
     @Override
-    public BigDecimal getCustomerBalance(Long customerId) {
+    public BigDecimal getCustomerBalance(Integer customerId) {
         // Verify customer exists
         customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerResourceNotFoundException(
@@ -175,12 +175,17 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentResponseDto mapToDto(Payment p) {
         PaymentResponseDto dto = new PaymentResponseDto();
         dto.setPaymentId(p.getPaymentId());
-        dto.setCustomerId(p.getCustomerId() != null ? p.getCustomerId().longValue() : null);
+        dto.setCustomerId(p.getCustomerId());
         dto.setStaffId(p.getStaffId());
-        dto.setRentalId(p.getRental() != null ? p.getRental().getRentalId() : null);
+
+        Integer rentalId = p.getRental() != null ? p.getRental().getRentalId().intValue() : null;
+        dto.setRentalId(rentalId);
+
         dto.setAmount(p.getAmount());
         dto.setPaymentDate(p.getPaymentDate());
         dto.setStatus("SUCCESS");
+        dto.setMessage("Payment of " + p.getAmount()
+                + " processed successfully for rental ID: " + rentalId);
         return dto;
     }
 }
