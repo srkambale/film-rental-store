@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * REST Controller for Payment endpoints.
  *
- * Base path: /api/payments
+ * Base path: /api/v1/payments
  */
 @RestController
 @RequestMapping("/api/v1/payments")
