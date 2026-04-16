@@ -1,0 +1,193 @@
+====================================================
+  PROBLEMS WE FACED AND HOW WE FIXED THEM
+====================================================
+
+This project connects a Spring Boot backend to a MySQL
+Sakila database. Here are all the issues we hit and
+exactly how each one was resolved.
+
+----------------------------------------------------
+PROBLEM 1: Data Type Mismatch (TINYINT / SMALLINT)
+----------------------------------------------------
+WHAT HAPPENED:
+  Hibernate tried to ALTER the database tables on startup
+  because the Java entity field types did not match the
+  MySQL column types.
+
+  MySQL Sakila uses:
+    - TINYINT UNSIGNED  for staff_id, store_id
+    - SMALLINT UNSIGNED for customer_id, address_id,
+                         film_id, city_id, country_id
+    - MEDIUMINT UNSIGNED for inventory_id, rental_id
+
+  But Java entities were using Long or Integer without
+  specifying the exact column definition, so Hibernate
+  assumed bigint or integer and tried to ALTER the table.
+
+  MySQL rejected the ALTER because foreign key constraints
+  were in place (e.g. fk_rental_customer, fk_city_country).
+
+ERROR MESSAGE:
+  Referencing column 'customer_id' and referenced column
+  'customer_id' in foreign key constraint 'fk_rental_customer'
+  are incompatible.
+
+HOW WE FIXED IT:
+  Added columnDefinition to every @Column annotation to
+  tell Hibernate the exact MySQL type:
+
+    @Column(name = "staff_id", columnDefinition = "TINYINT UNSIGNED")
+    @Column(name = "customer_id", columnDefinition = "SMALLINT UNSIGNED")
+    @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
+    @Column(name = "inventory_id", columnDefinition = "MEDIUMINT UNSIGNED")
+    @Column(name = "rental_id", columnDefinition = "MEDIUMINT UNSIGNED")
+
+  Also changed Java field types from Long to Integer where
+  needed so Hibernate's type comparison matched.
+
+FILES CHANGED:
+  - Staff.java, AuthStaff.java, AuthCustomer.java
+  - Customer.java, CustomerRental.java, CustomerInventory.java
+  - Payment.java, Film.java, Address.java
+  - Inventory.java, Rental.java
+  - City.java, Country.java
+
+----------------------------------------------------
+PROBLEM 2: Staff Picture BLOB Truncation Error
+----------------------------------------------------
+WHAT HAPPENED:
+  The staff table has a picture column of type BLOB in MySQL.
+  Hibernate was mapping it as tinyblob which is too small
+  and caused a data truncation error on startup.
+
+ERROR MESSAGE:
+  Data truncation: Data too long for column 'picture'
+
+HOW WE FIXED IT:
+  Changed the @Column annotation on the picture field in
+  both Staff.java and AuthStaff.java to use MEDIUMBLOB:
+
+    @Lob
+    @Column(name = "picture", columnDefinition = "MEDIUMBLOB")
+    private byte[] picture;
+
+----------------------------------------------------
+PROBLEM 3: Role Enum Name Too Long (Data Truncation)
+----------------------------------------------------
+WHAT HAPPENED:
+  The user_auth table has a role column. The Java enum
+  had values named AuthCustomer and AuthStaff. When
+  Hibernate tried to insert "AuthCustomer" (11 chars)
+  into the column, MySQL truncated it because the column
+  was too short or defined as an ENUM with different values.
+
+ERROR MESSAGE:
+  Data truncated for column 'role' at row 1
+
+HOW WE FIXED IT:
+  Renamed the Java enum values to short clean names:
+    AuthCustomer -> CUSTOMER
+    AuthStaff    -> STAFF
+    ADMIN stays  -> ADMIN
+
+  Updated all references in AuthService.java and
+  UserDetailsServiceImpl.java.
+
+  Also added backward compatibility so old requests
+  sending "AuthCustomer" still work:
+    if ("authcustomer".equalsIgnoreCase(roleInput))
+        role = UserAuth.Role.CUSTOMER;
+
+----------------------------------------------------
+PROBLEM 4: Security Config Using Old Role Names
+----------------------------------------------------
+WHAT HAPPENED:
+  After renaming the enum, the SecurityConfig still had
+  the old authority names ROLE_AuthStaff and ROLE_AuthCustomer.
+  This meant even with a valid token, access was denied.
+
+HOW WE FIXED IT:
+  Updated SecurityConfig.java:
+    Old: .hasAnyAuthority("ROLE_AuthStaff")
+    New: .hasAnyAuthority("ROLE_STAFF")
+
+    Old: .hasAnyAuthority("ROLE_AuthCustomer")
+    New: .hasAnyAuthority("ROLE_CUSTOMER")
+
+----------------------------------------------------
+PROBLEM 5: ddl-auto=update Causing FK Conflicts
+----------------------------------------------------
+WHAT HAPPENED:
+  spring.jpa.hibernate.ddl-auto=update tells Hibernate
+  to compare entities with the DB and ALTER tables if
+  different. Since Sakila has strict foreign keys, every
+  ALTER attempt was rejected by MySQL.
+
+  Even after adding columnDefinition, Hibernate still
+  tried to ALTER because Java Integer maps to SQL integer
+  but the DB had smallint unsigned.
+
+HOW WE FIXED IT:
+  Changed application.properties:
+    spring.jpa.hibernate.ddl-auto=none
+
+  With none, Hibernate never touches the schema.
+  It just reads and writes data. The Sakila schema
+  stays exactly as-is.
+
+  We also tried validate which confirmed the mismatch
+  but caused startup failure, so none is the right
+  choice for an existing production-like schema.
+
+----------------------------------------------------
+PROBLEM 6: PaymentDto getPaymentId() Method Deleted
+----------------------------------------------------
+WHAT HAPPENED:
+  During a string replacement edit, the method signature
+  line for getPaymentId() was accidentally removed from
+  PaymentDto.java, leaving only the return statement
+  floating outside any method.
+
+HOW WE FIXED IT:
+  Restored the method signature:
+    public Integer getPaymentId() {
+        return paymentId;
+    }
+
+----------------------------------------------------
+PROBLEM 7: CustomerDto Using Long for customerId
+----------------------------------------------------
+WHAT HAPPENED:
+  After changing Customer.java to use Integer for
+  customerId, the CustomerDto still had Long customerId.
+  The mapToDto() method in CustomerServiceImpl failed
+  because setCustomerId(Integer) was being called with
+  a Long setter.
+
+HOW WE FIXED IT:
+  Changed CustomerDto.customerId from Long to Integer
+  and updated its getter and setter accordingly.
+
+====================================================
+  SUMMARY OF ALL FILES CHANGED
+====================================================
+
+Entities:
+  Staff.java, AuthStaff.java, AuthCustomer.java,
+  Customer.java, CustomerRental.java, CustomerInventory.java,
+  Payment.java, Film.java, Address.java, City.java,
+  Country.java, Inventory.java, Rental.java
+
+DTOs:
+  CustomerDto.java, PaymentDto.java
+
+Services:
+  AuthService.java, UserDetailsServiceImpl.java
+
+Config:
+  SecurityConfig.java
+
+Properties:
+  application.properties (ddl-auto changed to none)
+
+====================================================

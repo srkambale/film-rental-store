@@ -24,20 +24,20 @@ public interface PaymentService {
     /**
      * Retrieve a single payment by its ID.
      */
-    PaymentResponseDto getPaymentById(Long paymentId);
+    PaymentResponseDto getPaymentById(Integer paymentId);
 
     /**
      * Retrieve all payments made by a specific customer.
      */
-    List<PaymentResponseDto> getPaymentsByCustomer(Long customerId);
+    List<PaymentResponseDto> getPaymentsByCustomer(Integer customerId);
 
     /**
      * Retrieve the payment associated with a specific rental.
      */
-    PaymentResponseDto getPaymentByRental(Long rentalId);
+    PaymentResponseDto getPaymentByRental(Integer rentalId);
 
     /**
      * Calculate the total amount spent by a customer (their balance).
      */
-    BigDecimal getCustomerBalance(Long customerId);
+    BigDecimal getCustomerBalance(Integer customerId);
 }

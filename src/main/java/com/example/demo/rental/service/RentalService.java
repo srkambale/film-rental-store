@@ -32,7 +32,7 @@ public class RentalService {
         Inventory inventory = inventoryRepository.findById(inventoryId)
                 .orElseThrow(() -> new com.example.demo.exception.ResourceNotFoundException("Inventory not found"));
 
-        Customer customer = customerRepository.findById(Long.valueOf(customerId))
+        Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new com.example.demo.exception.ResourceNotFoundException("Customer not found"));
 
         Rental rental = new Rental();

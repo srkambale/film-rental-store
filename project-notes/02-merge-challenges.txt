@@ -1,0 +1,195 @@
+====================================================
+  COLLABORATIVE DEVELOPMENT - MERGE CHALLENGES
+====================================================
+
+This project is built by a team where different members
+own different modules:
+  - You pulled: customer module + auth module
+  - Others built: staff module, rental module, admin
+
+Here are the challenges you will face when pulling and
+merging code from teammates.
+
+----------------------------------------------------
+CHALLENGE 1: Entity Type Conflicts
+----------------------------------------------------
+PROBLEM:
+  Different team members may map the same database column
+  with different Java types.
+
+  Example:
+    Your Customer.java uses Integer for customer_id
+    Your teammate's Rental.java uses Long for customer_id
+    (as a @JoinColumn or plain column)
+
+  When Hibernate sees both, it may try to ALTER the table
+  to match one of them, causing FK errors.
+
+HOW TO HANDLE:
+  Agree on a type mapping standard before coding:
+    TINYINT UNSIGNED  -> Integer (max 255)
+    SMALLINT UNSIGNED -> Integer (max 65535)
+    MEDIUMINT UNSIGNED-> Integer (max 16 million)
+    INT UNSIGNED      -> Long
+    BIGINT            -> Long
+
+  Always add columnDefinition to @Column so Hibernate
+  knows the exact DB type and does not try to change it.
+
+----------------------------------------------------
+CHALLENGE 2: Duplicate Entity Classes for Same Table
+----------------------------------------------------
+PROBLEM:
+  In this project, the same database tables are mapped
+  by multiple entity classes in different modules:
+
+    rental table -> CustomerRental.java (customer module)
+                 -> Rental.java (rental module)
+
+    inventory table -> CustomerInventory.java (customer module)
+                    -> Inventory.java (rental module)
+
+    customer table -> Customer.java (customer module)
+                   -> AuthCustomer.java (auth module)
+
+    staff table -> Staff.java (staff module)
+                -> AuthStaff.java (auth module)
+
+  This is intentional for module separation but causes
+  confusion and potential conflicts.
+
+HOW TO HANDLE:
+  Make sure both versions of the same entity have
+  identical column definitions and types. If one team
+  member changes a type in their version, the other
+  must update theirs too.
+
+  Consider using a shared-entities module in future
+  projects to avoid duplication.
+
+----------------------------------------------------
+CHALLENGE 3: Security Config Conflicts
+----------------------------------------------------
+PROBLEM:
+  SecurityConfig.java controls which roles can access
+  which endpoints. If your teammate adds a new endpoint
+  but does not update SecurityConfig, it will either
+  be blocked (401) or open to everyone.
+
+  Also if role names change (like AuthCustomer -> CUSTOMER)
+  the security rules must be updated too.
+
+HOW TO HANDLE:
+  One person should own SecurityConfig.java.
+  Any new endpoint must be reviewed against the security
+  rules before merging.
+
+  Always test with a token after merging security changes.
+
+----------------------------------------------------
+CHALLENGE 4: application.properties Conflicts
+----------------------------------------------------
+PROBLEM:
+  Both you and your teammate have application.properties.
+  Git will show a merge conflict if both changed it.
+
+  Common conflicts:
+    - datasource URL (different local DB IPs)
+    - ddl-auto setting (one uses update, other uses none)
+    - server port
+
+HOW TO HANDLE:
+  Use application-dev.properties and application-prod.properties
+  for environment-specific settings.
+  Keep application.properties only for shared settings.
+
+  Add application-dev.properties to .gitignore so each
+  developer keeps their own local DB config.
+
+----------------------------------------------------
+CHALLENGE 5: Repository Method Signature Conflicts
+----------------------------------------------------
+PROBLEM:
+  If Customer.java uses Long customerId but your teammate's
+  CustomerRentalRepository uses findByCustomerId(Integer id),
+  the method will not compile after merging.
+
+HOW TO HANDLE:
+  After every pull, run:
+    mvn compile
+  to catch type mismatches immediately before they pile up.
+
+  Check all repository interfaces after merging entity changes.
+
+----------------------------------------------------
+CHALLENGE 6: DTO Mismatch After Entity Changes
+----------------------------------------------------
+PROBLEM:
+  When an entity field type changes (Long -> Integer),
+  all DTOs and service mappers that reference that field
+  must also be updated.
+
+  If your teammate changes Customer.java but you own
+  CustomerDto.java, your DTO will break after pulling.
+
+HOW TO HANDLE:
+  Always search for usages of a field before changing its type.
+  In IntelliJ: right-click field -> Find Usages.
+
+  Communicate type changes to the whole team before pushing.
+
+----------------------------------------------------
+CHALLENGE 7: JWT Role Name Mismatch
+----------------------------------------------------
+PROBLEM:
+  The JWT token stores the role name as a string.
+  If one module generates tokens with "AuthCustomer"
+  and another module validates with "CUSTOMER", access
+  will be denied even with a valid token.
+
+HOW TO HANDLE:
+  The role name in UserAuth.Role enum, the token generation
+  in AuthService, and the security rules in SecurityConfig
+  must all use the same string.
+
+  In this project the agreed names are: ADMIN, STAFF, CUSTOMER
+  The authority prefix ROLE_ is added automatically by
+  UserDetailsServiceImpl.
+
+----------------------------------------------------
+CHALLENGE 8: Git Merge Conflicts in Entity Files
+----------------------------------------------------
+PROBLEM:
+  If two people edit the same entity file, Git will
+  show conflict markers like:
+    <<<<<<< HEAD
+    private Integer customerId;
+    =======
+    private Long customerId;
+    >>>>>>> teammate-branch
+
+HOW TO HANDLE:
+  Always pull before starting work:
+    git pull origin main
+
+  Use feature branches:
+    git checkout -b feature/customer-module
+
+  Merge frequently to avoid large conflicts.
+
+  When resolving entity conflicts, always check the
+  actual MySQL column type and use that as the source
+  of truth.
+
+====================================================
+  BEST PRACTICES FOR THIS PROJECT
+====================================================
+
+1. Run mvn compile after every git pull
+2. Test all auth endpoints after any security change
+3. Keep ddl-auto=none in production/shared environments
+4. Agree on Java types for all shared column IDs
+5. One person owns SecurityConfig.java
+6. Use Postman collections shared via Git or Postman team
+
+====================================================

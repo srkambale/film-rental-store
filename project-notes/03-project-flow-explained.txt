@@ -1,0 +1,351 @@
+====================================================
+  PROJECT FLOW - HOW EVERYTHING WORKS TOGETHER
+====================================================
+
+PROJECT: Film Rental Store
+TECH STACK: Spring Boot 3.2, Spring Security, JWT,
+            JPA/Hibernate, MySQL (Sakila DB)
+
+====================================================
+  HIGH LEVEL ARCHITECTURE
+====================================================
+
+  [Postman/Browser]
+       |
+       | HTTP Request
+       v
+  [Spring Security Filter]  <-- checks JWT token
+       |
+       v
+  [Controller]  <-- receives request, calls service
+       |
+       v
+  [Service]  <-- business logic
+       |
+       v
+  [Repository]  <-- talks to database via JPA
+       |
+       v
+  [MySQL Database (Sakila)]
+
+  On the way back:
+  Repository -> Service -> Controller -> DTO -> JSON Response
+
+====================================================
+  MODULE BREAKDOWN
+====================================================
+
+The project is split into 4 main modules:
+
+  1. auth     - registration, login, JWT tokens
+  2. customer - customer profile, rentals, payments, films
+  3. staff    - staff management
+  4. rental   - rental and inventory management
+
+====================================================
+  AUTH MODULE - HOW IT WORKS
+====================================================
+
+PURPOSE: Register users, login, issue JWT tokens
+
+ENTITIES:
+  UserAuth.java
+    - Stored in user_auth table (custom table, not Sakila)
+    - Fields: id, username, email, password, role, refId
+    - role is an enum: ADMIN, STAFF, CUSTOMER
+    - refId links to the actual staff_id or customer_id
+      in the Sakila tables
+
+  AuthCustomer.java
+    - Maps to the Sakila customer table
+    - Used only during registration to create a customer record
+    - Lightweight version of Customer.java
+
+  AuthStaff.java
+    - Maps to the Sakila staff table
+    - Used only during registration to create a staff record
+
+DTOs:
+  RegisterRequest.java  - what the client sends to register
+  LoginRequest.java     - what the client sends to login
+  AuthResponse.java     - what the server returns (token + role)
+
+SERVICE - AuthService.java:
+  register() method:
+    1. Checks the role in the request (CUSTOMER, STAFF, ADMIN)
+    2. If CUSTOMER:
+       - Creates a record in the customer table (AuthCustomer)
+       - Creates a record in user_auth table (UserAuth)
+       - Generates a JWT token
+    3. If STAFF or ADMIN:
+       - Creates a record in the staff table (AuthStaff)
+       - Creates a record in user_auth table (UserAuth)
+       - Generates a JWT token
+
+  login() method:
+    1. Calls Spring Security AuthenticationManager
+    2. If credentials valid, loads user from user_auth
+    3. Generates JWT token with role embedded
+    4. Returns token + role + identifier
+
+SERVICE - JwtService.java:
+  generateToken() - creates a JWT with role claim and expiry
+  extractUsername() - reads subject from token
+  extractRole() - reads role claim from token
+  isTokenValid() - checks username match and expiry
+
+SERVICE - UserDetailsServiceImpl.java:
+  loadUserByUsername() - called by Spring Security
+    1. Tries to find user by username (staff/admin)
+    2. Falls back to email (customer)
+    3. Returns UserDetails with ROLE_CUSTOMER / ROLE_STAFF / ROLE_ADMIN
+
+FILTER - JwtAuthenticationFilter.java:
+  Runs on every request except /api/auth/**
+    1. Reads Authorization header
+    2. Extracts JWT token
+    3. Validates token
+    4. Sets authentication in SecurityContext
+    5. Spring Security then checks if the role has permission
+
+CONFIG - SecurityConfig.java:
+  Defines which endpoints need which roles:
+    /api/auth/**     -> public (no token)
+    /api/staff/**    -> ADMIN or STAFF
+    /api/customer/** -> ADMIN or CUSTOMER
+    everything else  -> any authenticated user
+
+====================================================
+  CUSTOMER MODULE - HOW IT WORKS
+====================================================
+
+PURPOSE: Let customers view their profile, rentals,
+         payments, and search for films
+
+ENTITIES:
+  Customer.java     -> customer table
+  Address.java      -> address table
+  City.java         -> city table
+  Country.java      -> country table
+  Film.java         -> film table
+  CustomerRental.java   -> rental table (customer view)
+  CustomerInventory.java -> inventory table (customer view)
+  Payment.java      -> payment table
+
+  Note: CustomerRental and CustomerInventory are the same
+  database tables as Rental and Inventory in the rental
+  module. They exist separately for module independence.
+
+DTOs (Data Transfer Objects):
+  CustomerDto        - what gets returned for customer info
+  CustomerUpdateDto  - what client sends to update profile
+  AddressDto         - address info
+  FilmSearchDto      - film search results
+  RentalRequestDto   - what client sends to rent a film
+  RentalResponseDto  - what gets returned for rental info
+  PaymentDto         - payment info
+
+  WHY DTOs?
+  Entities contain all database fields including sensitive
+  ones. DTOs let you control exactly what data is exposed
+  in the API response. Never return raw entities.
+
+REPOSITORIES:
+  CustomerRepository         -> findById, save
+  CustomerRentalRepository   -> findByCustomerId
+  PaymentRepository          -> findByCustomerId
+  FilmRepository             -> findByTitleContaining, etc.
+  AddressRepository          -> save
+  CustomerInventoryRepository -> findByFilmAndStore
+
+SERVICES:
+  CustomerService / CustomerServiceImpl:
+    getCustomerById()    - fetch customer + address
+    updateCustomer()     - update name/email
+    updateAddress()      - update address fields
+    getCustomerRentals() - list all rentals for customer
+    getCustomerPayments()- list all payments for customer
+
+  FilmService / FilmServiceImpl:
+    searchFilmsByTitle()    - search by title keyword
+    searchFilmsByActor()    - search by actor name
+    searchFilmsByCategory() - search by genre
+
+  CustomerRentalService / CustomerRentalServiceImpl:
+    createRental() - rent a film
+      1. Finds available inventory for the film
+      2. Creates a rental record
+      3. Returns rental details
+
+CONTROLLERS:
+  CustomerController    -> /api/customers/**
+  FilmController        -> /api/films/**
+  CustomerRentalController -> /api/customer/rentals
+
+====================================================
+  STAFF MODULE - HOW IT WORKS
+====================================================
+
+PURPOSE: CRUD operations for staff members
+
+ENTITY:
+  Staff.java -> staff table
+  Fields: staffId, firstName, lastName, addressId,
+          picture (MEDIUMBLOB), email, storeId,
+          active, username, password, role, phone
+
+DTO:
+  StaffDTO.java - used for responses (hides password)
+
+SERVICE:
+  StaffService / StaffServiceImpl:
+    getAllStaff()    - list all staff
+    getStaffById()  - get one staff member
+    createStaff()   - add new staff
+    updateStaff()   - edit staff details
+    deleteStaff()   - remove staff
+
+CONTROLLER:
+  StaffController -> /api/staff/**
+  All endpoints require ADMIN or STAFF role
+
+====================================================
+  RENTAL MODULE - HOW IT WORKS
+====================================================
+
+PURPOSE: Manage rentals and inventory from staff side
+
+ENTITIES:
+  Rental.java    -> rental table
+    Fields: rentalId, rentalDate, inventory (FK),
+            customer (FK), returnDate, staffId, lastUpdate
+
+  Inventory.java -> inventory table
+    Fields: inventoryId, filmId, storeId, lastUpdate
+
+DTOs:
+  RentalRequest   - inventoryId, customerId, staffId
+  RentalResponse  - rental details
+  RentalSummaryDto - compact rental info
+  InventoryDto    - inventory item details
+
+SERVICES:
+  RentalService:
+    createRental()  - creates rental, marks inventory as rented
+    getAllRentals()  - list all rentals
+    getRentalById() - get one rental
+    returnMovie()   - sets returnDate to now
+    deleteRental()  - remove rental record
+
+  InventoryService:
+    getAllInventory()       - all inventory items
+    getInventoryById()     - one item
+    getInventoryByFilm()   - all copies of a film
+    getInventoryByStore()  - all items at a store
+    getAvailableInventory()- copies not currently rented
+    addInventory()         - add new copy
+    deleteInventory()      - remove copy (blocked if rented)
+
+  OverdueService:
+    Checks for rentals past their due date
+
+CONTROLLERS:
+  RentalController   -> /api/rentals/**
+  InventoryController -> /api/inventory/**
+
+====================================================
+  PAYMENT MODULE (REMAINING - NOT YET IMPLEMENTED)
+====================================================
+
+PURPOSE: Record and view payments for rentals
+
+WHAT NEEDS TO BE BUILT:
+  Entity:   Payment.java already exists in customer module
+  DTO:      PaymentDto.java already exists
+  Repository: PaymentRepository.java already exists
+
+  Still needed:
+    PaymentService.java
+    PaymentServiceImpl.java
+    PaymentController.java -> /api/payments/**
+
+PLANNED ENDPOINTS:
+  GET  /api/payments/{id}          - get one payment
+  GET  /api/payments/customer/{id} - all payments by customer
+  POST /api/payments               - create a payment
+  GET  /api/payments/overdue       - overdue rentals with amounts
+
+====================================================
+  ADMIN MODULE (REMAINING - NOT YET IMPLEMENTED)
+====================================================
+
+PURPOSE: Admin dashboard - manage everything
+
+WHAT NEEDS TO BE BUILT:
+  AdminController.java -> /api/admin/**
+
+PLANNED ENDPOINTS:
+  GET  /api/admin/customers        - all customers
+  GET  /api/admin/staff            - all staff
+  GET  /api/admin/rentals          - all rentals
+  GET  /api/admin/revenue          - total revenue
+  GET  /api/admin/overdue          - overdue rentals
+  POST /api/admin/customers/{id}/deactivate - deactivate customer
+
+====================================================
+  HOW A TYPICAL REQUEST FLOWS (EXAMPLE)
+====================================================
+
+SCENARIO: Customer searches for a film by title
+
+1. Client sends:
+   GET /api/films/search/title?title=ace
+   Authorization: Bearer eyJhbGci...
+
+2. JwtAuthenticationFilter runs:
+   - Reads the Bearer token
+   - Extracts username (email for customer)
+   - Loads UserDetails from user_auth table
+   - Validates token signature and expiry
+   - Sets authentication in SecurityContext
+
+3. SecurityConfig checks:
+   - /api/films/** requires anyRequest().authenticated()
+   - User is authenticated -> allow through
+
+4. FilmController.searchByTitle() is called:
+   - Reads ?title=ace from query params
+   - Calls filmService.searchFilmsByTitle("ace")
+
+5. FilmServiceImpl.searchFilmsByTitle():
+   - Calls filmRepository.findByTitleContainingIgnoreCase("ace")
+   - Gets list of Film entities from database
+
+6. Maps Film entities to FilmSearchDto:
+   - Only exposes: filmId, title, description, rating, rentalRate
+   - Hides internal fields like languageId
+
+7. Returns List<FilmSearchDto> as JSON response
+
+====================================================
+  DATABASE RELATIONSHIP SUMMARY
+====================================================
+
+  country (1) ---< city (many)
+  city (1) ---< address (many)
+  address (1) ---< customer (many)
+  address (1) ---< staff (many)
+
+  film (1) ---< inventory (many)
+  inventory (1) ---< rental (many)
+  customer (1) ---< rental (many)
+  staff (1) ---< rental (many)
+
+  customer (1) ---< payment (many)
+  rental (1) ---< payment (many)
+  staff (1) ---< payment (many)
+
+  user_auth is a CUSTOM table (not in original Sakila)
+  It links to customer or staff via refId field
+
+====================================================
