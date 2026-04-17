@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>API Test Results</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        .status-pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .status-success { background: #dcfce7; color: #059669; }
+        .status-error { background: #fee2e2; color: #dc2626; }
+        
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .result-table th {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .result-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .raw-json {
+            background: #1e293b;
+            color: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <a th:href="@{/}" class="back-link">&larr; Back Home</a>
+                <h1 style="margin: 10px 0;">Request Results</h1>
+                <p>
+                    <span th:class="'method-badge method-' + ${method}" th:text="${method}">GET</span>
+                    <code style="font-size: 1.1rem;" th:text="${url}">/api/v1/...</code>
+                </p>
+            </div>
+            <div th:class="'status-pill ' + (${status < 400} ? 'status-success' : 'status-error')">
+                Status Code: <span th:text="${status}">200</span>
+            </div>
+        </div>
+
+        <!-- Error Section -->
+        <div th:if="${error}" class="status-error" style="padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+            <h3 style="margin-top: 0;">Error Details:</h3>
+            <pre th:text="${error}"></pre>
+        </div>
+
+        <!-- Data Section -->
+        <div th:if="${data}">
+            
+            <!-- Case 1: List of Objects (Render as Table) -->
+            <div th:if="${data instanceof T(java.util.List)}">
+                <h3>Response Data (<span th:text="${#lists.size(data)}"></span> items)</h3>
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <!-- Get keys from the first item in the list if it's a map -->
+                            <th th:each="entry : ${data[0]}" th:text="${entry.key}">Key</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${data}">
+                            <td th:each="entry : ${item}" th:text="${entry.value}">Value</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Case 2: Single Object (Render as Key-Value Table) -->
+            <div th:if="${data instanceof T(java.util.Map)}">
+                <h3>Item Details</h3>
+                <table class="result-table" style="max-width: 600px;">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="entry : ${data}">
+                            <td style="font-weight: 700; background: #f8fafc;" th:text="${entry.key}">Key</td>
+                            <td th:text="${entry.value}">Value</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Case 3: Other (String/etc) -->
+            <div th:if="${!(data instanceof T(java.util.List)) && !(data instanceof T(java.util.Map))}">
+                <h3>Response Preview</h3>
+                <pre class="raw-json" th:text="${data}"></pre>
+            </div>
+
+        </div>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <p style="color: grey;">Detailed documentation results for end-users.</p>
+        </div>
+    </div>
+</body>
+</html>
