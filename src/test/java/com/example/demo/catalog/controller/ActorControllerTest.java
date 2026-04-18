@@ -1,25 +1,17 @@
 package com.example.demo.catalog.controller;
 
 import com.example.demo.catalog.dto.ActorDto;
+import com.example.demo.catalog.dto.ActorUpdateDto;
 import com.example.demo.catalog.service.ActorService;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithMockUser;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -28,6 +20,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -128,5 +121,19 @@ public class ActorControllerTest {
         mockMvc.perform(delete("/api/v1/catalog/actors/1")
                         .with(csrf()))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void patchActor_ShouldReturnUpdatedActor() throws Exception {
+        ActorUpdateDto updates = new ActorUpdateDto();
+        updates.setFirstName("NEW NAME");
+
+        when(actorService.patchActor(eq(1L), any(ActorUpdateDto.class))).thenReturn(actorDto);
+
+        mockMvc.perform(patch("/api/v1/catalog/actors/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updates)))
+                .andExpect(status().isOk());
     }
 }

@@ -2,6 +2,7 @@ package com.example.demo.catalog.controller;
 
 import com.example.demo.catalog.dto.FilmDto;
 import com.example.demo.catalog.dto.FilmSummaryDto;
+import com.example.demo.catalog.dto.FilmUpdateDto;
 import com.example.demo.catalog.service.FilmService;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,5 +59,10 @@ public class FilmController {
     @GetMapping("/{id}")
     public FilmDto getFilmById(@PathVariable Long id) {
         return filmService.getFilmById(id);
+    }
+
+    @PatchMapping("/{id}")
+    public FilmDto patchFilm(@PathVariable Long id, @RequestBody FilmUpdateDto updates) {
+        return filmService.patchFilm(id, updates);
     }
 }
