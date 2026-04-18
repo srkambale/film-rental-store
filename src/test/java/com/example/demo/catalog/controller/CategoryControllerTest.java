@@ -127,4 +127,18 @@ public class CategoryControllerTest {
                         .with(csrf()))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    void patchCategory_ShouldReturnUpdatedCategory() throws Exception {
+        com.example.demo.catalog.dto.CategoryUpdateDto updates = new com.example.demo.catalog.dto.CategoryUpdateDto();
+        updates.setName("NEW NAME");
+
+        when(categoryService.patchCategory(eq(1L), any(com.example.demo.catalog.dto.CategoryUpdateDto.class))).thenReturn(categoryDto);
+
+        mockMvc.perform(patch("/api/v1/catalog/categories/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updates)))
+                .andExpect(status().isOk());
+    }
 }

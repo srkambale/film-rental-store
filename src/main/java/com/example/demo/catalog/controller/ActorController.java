@@ -1,6 +1,7 @@
 package com.example.demo.catalog.controller;
 
 import com.example.demo.catalog.dto.ActorDto;
+import com.example.demo.catalog.dto.ActorUpdateDto;
 import com.example.demo.catalog.service.ActorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,11 @@ public class ActorController {
     @PutMapping("/{id}")
     public ActorDto updateActor(@PathVariable Long id, @RequestBody ActorDto actorDto) {
         return actorService.updateActor(id, actorDto);
+    }
+
+    @PatchMapping("/{id}")
+    public ActorDto patchActor(@PathVariable Long id, @RequestBody ActorUpdateDto updates) {
+        return actorService.patchActor(id, updates);
     }
 
     @DeleteMapping("/{id}")

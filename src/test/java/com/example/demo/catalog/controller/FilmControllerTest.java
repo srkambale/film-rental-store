@@ -18,14 +18,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
-
+import org.springframework.http.MediaType;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = FilmController.class)
@@ -44,6 +48,9 @@ public class FilmControllerTest {
     
     @MockBean
     private com.example.demo.auth.service.JwtService jwtService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private FilmSummaryDto filmSummaryDto;
     private FilmDto filmDto;
@@ -141,5 +148,19 @@ public class FilmControllerTest {
 
         mockMvc.perform(get("/api/v1/catalog/films/1"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void patchFilm_ShouldReturnUpdatedFilm() throws Exception {
+        com.example.demo.catalog.dto.FilmUpdateDto updates = new com.example.demo.catalog.dto.FilmUpdateDto();
+        updates.setTitle("UPDATED TITLE");
+
+        when(filmService.patchFilm(eq(1L), any(com.example.demo.catalog.dto.FilmUpdateDto.class))).thenReturn(filmDto);
+
+        mockMvc.perform(patch("/api/v1/catalog/films/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updates)))
+                .andExpect(status().isOk());
     }
 }

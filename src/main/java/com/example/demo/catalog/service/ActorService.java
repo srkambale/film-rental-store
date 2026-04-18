@@ -1,6 +1,7 @@
 package com.example.demo.catalog.service;
 
 import com.example.demo.catalog.dto.ActorDto;
+import com.example.demo.catalog.dto.ActorUpdateDto;
 import com.example.demo.catalog.entity.Actor;
 import com.example.demo.catalog.repository.ActorRepository;
 import com.example.demo.exception.ResourceNotFoundException;
@@ -48,6 +49,17 @@ public class ActorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Actor not found"));
         actor.setFirstName(dto.firstName());
         actor.setLastName(dto.lastName());
+        return mapToDto(actorRepository.save(actor));
+    }
+
+    @Transactional
+    public ActorDto patchActor(Long id, ActorUpdateDto updates) {
+        Actor actor = actorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Actor not found"));
+
+        if (updates.getFirstName() != null) actor.setFirstName(updates.getFirstName());
+        if (updates.getLastName() != null) actor.setLastName(updates.getLastName());
+
         return mapToDto(actorRepository.save(actor));
     }
 

@@ -1,6 +1,7 @@
 package com.example.demo.catalog.service;
 
 import com.example.demo.catalog.dto.CategoryDto;
+import com.example.demo.catalog.dto.CategoryUpdateDto;
 import com.example.demo.catalog.entity.Category;
 import com.example.demo.catalog.repository.CategoryRepository;
 import com.example.demo.exception.ResourceNotFoundException;
@@ -53,6 +54,16 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         category.setName(dto.name());
+        return mapToDto(categoryRepository.save(category));
+    }
+
+    @Transactional
+    public CategoryDto patchCategory(Long id, CategoryUpdateDto updates) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        if (updates.getName() != null) category.setName(updates.getName());
+
         return mapToDto(categoryRepository.save(category));
     }
 
