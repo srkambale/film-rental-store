@@ -63,13 +63,7 @@ public class ActorService {
         return mapToDto(actorRepository.save(actor));
     }
 
-    @Transactional
-    public void deleteActor(Long id) {
-        if (!actorRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Actor not found");
-        }
-        actorRepository.deleteById(id);
-    }
+
 
     @Transactional(readOnly = true)
     public List<ActorDto> searchActors(String name) {

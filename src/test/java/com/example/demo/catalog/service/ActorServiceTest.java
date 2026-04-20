@@ -91,15 +91,7 @@ class ActorServiceTest {
         assertEquals("DOE", result.lastName());
     }
 
-    @Test
-    void testDeleteActor_Success() {
-        when(actorRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(actorRepository).deleteById(1L);
 
-        actorService.deleteActor(1L);
-
-        verify(actorRepository, times(1)).deleteById(1L);
-    }
 
     @Test
     void testSearchActors() {

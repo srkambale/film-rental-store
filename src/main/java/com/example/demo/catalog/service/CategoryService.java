@@ -67,13 +67,7 @@ public class CategoryService {
         return mapToDto(categoryRepository.save(category));
     }
 
-    @Transactional
-    public void deleteCategory(Long id) {
-        if (!categoryRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Category not found");
-        }
-        categoryRepository.deleteById(id);
-    }
+
 
     private CategoryDto mapToDto(Category category) {
         return new CategoryDto(category.getCategoryId(), category.getName());

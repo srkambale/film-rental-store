@@ -114,14 +114,7 @@ public class ActorControllerTest {
                 .andExpect(jsonPath("$.firstName").value("PENELOPE"));
     }
 
-    @Test
-    void deleteActor_ShouldReturnNoContent() throws Exception {
-        doNothing().when(actorService).deleteActor(1L);
 
-        mockMvc.perform(delete("/api/v1/catalog/actors/1")
-                        .with(csrf()))
-                .andExpect(status().isNoContent());
-    }
 
     @Test
     void patchActor_ShouldReturnUpdatedActor() throws Exception {

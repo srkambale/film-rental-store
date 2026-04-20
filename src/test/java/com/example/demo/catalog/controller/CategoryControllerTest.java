@@ -119,14 +119,7 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.name").value("Action"));
     }
 
-    @Test
-    void deleteCategory_ShouldReturnNoContent() throws Exception {
-        doNothing().when(categoryService).deleteCategory(1L);
 
-        mockMvc.perform(delete("/api/v1/catalog/categories/1")
-                        .with(csrf()))
-                .andExpect(status().isNoContent());
-    }
 
     @Test
     void patchCategory_ShouldReturnUpdatedCategory() throws Exception {

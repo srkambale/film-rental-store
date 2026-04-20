@@ -88,13 +88,5 @@ class CategoryServiceTest {
         assertEquals("Action", result.name());
     }
 
-    @Test
-    void testDeleteCategory_Success() {
-        when(categoryRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(categoryRepository).deleteById(1L);
 
-        categoryService.deleteCategory(1L);
-
-        verify(categoryRepository, times(1)).deleteById(1L);
-    }
 }
