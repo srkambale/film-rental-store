@@ -4,12 +4,13 @@ import com.example.demo.catalog.dto.ActorDto;
 import com.example.demo.catalog.dto.CategoryDto;
 import com.example.demo.catalog.dto.FilmDto;
 import com.example.demo.catalog.dto.FilmSummaryDto;
+import com.example.demo.catalog.dto.FilmUpdateDto;
 import com.example.demo.catalog.entity.Film;
 import com.example.demo.catalog.repository.FilmRepository;
-import org.springframework.http.HttpStatus;
+import com.example.demo.catalog.repository.LanguageRepository;
+import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Set;
@@ -19,9 +20,11 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmRepository filmRepository;
+    private final LanguageRepository languageRepository;
 
-    public FilmService(FilmRepository filmRepository) {
+    public FilmService(FilmRepository filmRepository, LanguageRepository languageRepository) {
         this.filmRepository = filmRepository;
+        this.languageRepository = languageRepository;
     }
 
     @Transactional(readOnly = true)
@@ -87,7 +90,35 @@ public class FilmService {
     public FilmDto getFilmById(Long id) {
         return filmRepository.findById(id)
                 .map(this::mapToDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Film not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found"));
+    }
+
+    @Transactional
+    public FilmDto patchFilm(Long id, FilmUpdateDto updates) {
+        Film film = filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film not found"));
+
+        if (updates.getTitle() != null) film.setTitle(updates.getTitle());
+        if (updates.getDescription() != null) film.setDescription(updates.getDescription());
+        if (updates.getReleaseYear() != null) film.setReleaseYear(updates.getReleaseYear());
+        if (updates.getRentalDuration() != null) film.setRentalDuration(updates.getRentalDuration());
+        if (updates.getRentalRate() != null) film.setRentalRate(updates.getRentalRate());
+        if (updates.getLength() != null) film.setLength(updates.getLength());
+        if (updates.getReplacementCost() != null) film.setReplacementCost(updates.getReplacementCost());
+        if (updates.getRating() != null) film.setRating(updates.getRating());
+        if (updates.getSpecialFeatures() != null) film.setSpecialFeatures(updates.getSpecialFeatures());
+
+        if (updates.getLanguageId() != null) {
+            film.setLanguage(languageRepository.findById(updates.getLanguageId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Language not found with id " + updates.getLanguageId())));
+        }
+
+        if (updates.getOriginalLanguageId() != null) {
+            film.setOriginalLanguage(languageRepository.findById(updates.getOriginalLanguageId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Original Language not found with id " + updates.getOriginalLanguageId())));
+        }
+
+        return mapToDto(filmRepository.save(film));
     }
 
     private FilmSummaryDto mapToSummaryDto(Film film) {

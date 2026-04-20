@@ -1,12 +1,12 @@
 package com.example.demo.customer.dto;
 
 public class CustomerSummaryDto {
-    private Long customerId;
+    private Integer customerId;
     private String fullName;
     private String email;
 
-    public Long getCustomerId() { return customerId; }
-    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+    public Integer getCustomerId() { return customerId; }
+    public void setCustomerId(Integer customerId) { this.customerId = customerId; }
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }

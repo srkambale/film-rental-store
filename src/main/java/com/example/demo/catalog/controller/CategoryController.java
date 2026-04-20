@@ -1,6 +1,7 @@
 package com.example.demo.catalog.controller;
 
 import com.example.demo.catalog.dto.CategoryDto;
+import com.example.demo.catalog.dto.CategoryUpdateDto;
 import com.example.demo.catalog.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,11 @@ public class CategoryController {
     @PutMapping("/{id}")
     public CategoryDto updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
         return categoryService.updateCategory(id, categoryDto);
+    }
+
+    @PatchMapping("/{id}")
+    public CategoryDto patchCategory(@PathVariable Long id, @RequestBody CategoryUpdateDto updates) {
+        return categoryService.patchCategory(id, updates);
     }
 
     @DeleteMapping("/{id}")

@@ -1,18 +1,18 @@
 package com.example.demo.customer.dto;
 
 public class RentalRequestDto {
-    private Long customerId;
-    private Long inventoryId;
-	public Long getCustomerId() {
+    private Integer customerId;
+    private Integer inventoryId;
+	public Integer getCustomerId() {
 		return customerId;
 	}
-	public void setCustomerId(Long customerId) {
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
-	public Long getInventoryId() {
+	public Integer getInventoryId() {
 		return inventoryId;
 	}
-	public void setInventoryId(Long inventoryId) {
+	public void setInventoryId(Integer inventoryId) {
 		this.inventoryId = inventoryId;
 	}
     

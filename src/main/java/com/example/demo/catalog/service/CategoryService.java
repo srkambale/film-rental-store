@@ -1,12 +1,12 @@
 package com.example.demo.catalog.service;
 
 import com.example.demo.catalog.dto.CategoryDto;
+import com.example.demo.catalog.dto.CategoryUpdateDto;
 import com.example.demo.catalog.entity.Category;
 import com.example.demo.catalog.repository.CategoryRepository;
-import org.springframework.http.HttpStatus;
+import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +38,7 @@ public class CategoryService {
     public CategoryDto getCategoryById(Long id) {
         return categoryRepository.findById(id)
                 .map(this::mapToDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
     }
 
     @Transactional
@@ -52,15 +52,25 @@ public class CategoryService {
     @Transactional
     public CategoryDto updateCategory(Long id, CategoryDto dto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         category.setName(dto.name());
+        return mapToDto(categoryRepository.save(category));
+    }
+
+    @Transactional
+    public CategoryDto patchCategory(Long id, CategoryUpdateDto updates) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        if (updates.getName() != null) category.setName(updates.getName());
+
         return mapToDto(categoryRepository.save(category));
     }
 
     @Transactional
     public void deleteCategory(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
+            throw new ResourceNotFoundException("Category not found");
         }
         categoryRepository.deleteById(id);
     }

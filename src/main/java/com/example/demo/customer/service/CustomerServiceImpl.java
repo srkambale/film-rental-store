@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.customer.repository.*;
 import com.example.demo.customer.dto.CustomerDto;
 import com.example.demo.customer.dto.*;
-import com.example.demo.customer.exception.CustomerResourceNotFoundException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.customer.model.*;
 
 
@@ -32,9 +32,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 	    @Override
-	    public CustomerDto getCustomerById(Long id) {
+	    public CustomerDto getCustomerById(Integer id) {
 	        Customer customer = customerRepository.findById(id)
-	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
+	                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
 	        return mapToDto(customer);
 	    }
@@ -42,7 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    @Override
 	    public CustomerDto createCustomer(CustomerCreateDto dto) {
 	        Address address = addressRepository.findById(dto.getAddressId())
-	                .orElseThrow(() -> new CustomerResourceNotFoundException("Address not found with id " + dto.getAddressId()));
+	                .orElseThrow(() -> new ResourceNotFoundException("Address not found with id " + dto.getAddressId()));
 	        
 	        Customer customer = new Customer();
 	        customer.setFirstName(dto.getFirstName());
@@ -59,9 +59,9 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public CustomerDto updateCustomer(Long id, CustomerUpdateDto dto) {
+	    public CustomerDto updateCustomer(Integer id, CustomerUpdateDto dto) {
 	        Customer customer = customerRepository.findById(id)
-	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
+	                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
 	        customer.setFirstName(dto.getFirstName());
 	        customer.setLastName(dto.getLastName());
@@ -71,9 +71,9 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public AddressDto updateAddress(Long customerId, AddressDto dto) {
+	    public AddressDto updateAddress(Integer customerId, AddressDto dto) {
 	        Customer customer = customerRepository.findById(customerId)
-	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
+	                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
 	        Address address = customer.getAddress();
 	        address.setAddress(dto.getAddress());
@@ -85,7 +85,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public List<RentalResponseDto> getCustomerRentals(Long customerId) {
+	    public List<RentalResponseDto> getCustomerRentals(Integer customerId) {
 	        List<CustomerRental> rentals = rentalRepository.findByCustomerId(customerId);
 
 	        return rentals.stream()
@@ -94,7 +94,7 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public List<PaymentDto> getCustomerPayments(Long customerId) {
+	    public List<PaymentDto> getCustomerPayments(Integer customerId) {
 	        List<Payment> payments = paymentRepository.findByCustomerId(customerId);
 
 	        return payments.stream()
@@ -120,9 +120,9 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public CustomerDto patchCustomer(Long id, CustomerUpdateDto dto) {
+	    public CustomerDto patchCustomer(Integer id, CustomerUpdateDto dto) {
 	        Customer customer = customerRepository.findById(id)
-	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
+	                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
 	        if (dto.getFirstName() != null) customer.setFirstName(dto.getFirstName());
 	        if (dto.getLastName() != null) customer.setLastName(dto.getLastName());
@@ -132,9 +132,9 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public AddressDto patchAddress(Long customerId, AddressDto dto) {
+	    public AddressDto patchAddress(Integer customerId, AddressDto dto) {
 	        Customer customer = customerRepository.findById(customerId)
-	                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found"));
+	                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
 	        Address address = customer.getAddress();
 	        if (dto.getAddress() != null) address.setAddress(dto.getAddress());
@@ -147,16 +147,16 @@ public class CustomerServiceImpl implements CustomerService {
 	    }
 
 	    @Override
-	    public PaymentDto getCustomerPaymentById(Long customerId, Long paymentId) {
+	    public PaymentDto getCustomerPaymentById(Integer customerId, Integer paymentId) {
 	        Payment payment = paymentRepository.findByCustomerIdAndPaymentId(customerId, paymentId)
-	                .orElseThrow(() -> new CustomerResourceNotFoundException("Payment not found"));
+	                .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
 	        return mapToPaymentDto(payment);
 	    }
 
 	    @Override
-	    public RentalResponseDto getCustomerRentalById(Long customerId, Long rentalId) {
+	    public RentalResponseDto getCustomerRentalById(Integer customerId, Integer rentalId) {
 	        CustomerRental rental = rentalRepository.fetchByCustomerIdAndRentalId(customerId, rentalId)
-	                .orElseThrow(() -> new CustomerResourceNotFoundException("Rental not found"));
+	                .orElseThrow(() -> new ResourceNotFoundException("Rental not found"));
 	        return mapToRentalDto(rental);
 	    }
 

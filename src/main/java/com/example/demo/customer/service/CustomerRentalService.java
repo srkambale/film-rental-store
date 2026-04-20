@@ -8,7 +8,7 @@ public interface CustomerRentalService {
 
     RentalResponseDto createRental(RentalRequestDto request);
 
-    List<RentalResponseDto> getRentalsByCustomer(Long customerId);
+    List<RentalResponseDto> getRentalsByCustomer(Integer customerId);
 
-    RentalResponseDto returnFilm(Long rentalId);
+    RentalResponseDto returnFilm(Integer rentalId);
 }

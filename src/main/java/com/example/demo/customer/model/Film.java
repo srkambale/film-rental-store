@@ -12,7 +12,7 @@ public class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
-    private Long filmId;
+    private Integer filmId;
 
     @Column(name = "title", nullable = false, length = 128)
     private String title;
@@ -25,10 +25,10 @@ public class Film {
     private Integer releaseYear;
 
     @Column(name = "language_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    private Long languageId;
+    private Integer languageId;
 
     @Column(name = "original_language_id", columnDefinition = "TINYINT UNSIGNED")
-    private Long originalLanguageId;
+    private Integer originalLanguageId;
 
     @Column(name = "rental_duration", nullable = false)
     private Integer rentalDuration;
@@ -57,8 +57,8 @@ public class Film {
 
     public Film() {}
 
-    public Film(Long filmId, String title, String description, Integer releaseYear,
-                Long languageId, Long originalLanguageId, Integer rentalDuration,
+    public Film(Integer filmId, String title, String description, Integer releaseYear,
+                Integer languageId, Integer originalLanguageId, Integer rentalDuration,
                 BigDecimal rentalRate, Integer length, BigDecimal replacementCost,
                 String rating, String specialFeatures, LocalDateTime lastUpdate) {
 
@@ -78,8 +78,8 @@ public class Film {
     }
 
 
-    public Long getFilmId() { return filmId; }
-    public void setFilmId(Long filmId) { this.filmId = filmId; }
+    public Integer getFilmId() { return filmId; }
+    public void setFilmId(Integer filmId) { this.filmId = filmId; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -90,11 +90,11 @@ public class Film {
     public Integer getReleaseYear() { return releaseYear; }
     public void setReleaseYear(Integer releaseYear) { this.releaseYear = releaseYear; }
 
-    public Long getLanguageId() { return languageId; }
-    public void setLanguageId(Long languageId) { this.languageId = languageId; }
+    public Integer getLanguageId() { return languageId; }
+    public void setLanguageId(Integer languageId) { this.languageId = languageId; }
 
-    public Long getOriginalLanguageId() { return originalLanguageId; }
-    public void setOriginalLanguageId(Long originalLanguageId) { this.originalLanguageId = originalLanguageId; }
+    public Integer getOriginalLanguageId() { return originalLanguageId; }
+    public void setOriginalLanguageId(Integer originalLanguageId) { this.originalLanguageId = originalLanguageId; }
 
     public Integer getRentalDuration() { return rentalDuration; }
     public void setRentalDuration(Integer rentalDuration) { this.rentalDuration = rentalDuration; }

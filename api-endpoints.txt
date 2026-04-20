@@ -1,0 +1,198 @@
+====================================================
+  FILM RENTAL STORE - API ENDPOINTS
+  Base URL: http://localhost:8081
+====================================================
+
+HOW TO USE:
+  1. Register or Login to get a JWT token
+  2. For all protected endpoints, add header:
+     Authorization: Bearer <your_token_here>
+
+====================================================
+  AUTH (Public - No token required)
+====================================================
+
+POST   /api/auth/register
+  Body (Customer):
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@example.com",
+      "password": "pass123",
+      "role": "CUSTOMER"
+    }
+  Body (Staff):
+    {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "jane@example.com",
+      "username": "jane.smith",
+      "password": "pass123",
+      "role": "STAFF",
+      "storeId": 1
+    }
+  Body (Admin):
+    {
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@example.com",
+      "username": "admin",
+      "password": "pass123",
+      "role": "ADMIN",
+      "storeId": 1
+    }
+
+POST   /api/auth/login
+  Body (Staff/Admin - login by username):
+    {
+      "identifier": "jane.smith",
+      "password": "pass123"
+    }
+  Body (Customer - login by email):
+    {
+      "identifier": "john@example.com",
+      "password": "pass123"
+    }
+
+GET    /api/auth/me
+  Requires: Bearer token
+  Returns: current logged-in user info
+
+====================================================
+  FILMS (Any authenticated user)
+====================================================
+
+GET    /api/films/search/title?title=academy
+GET    /api/films/search/actor?actor=penelope
+GET    /api/films/search/category?category=action
+
+====================================================
+  CUSTOMERS (Role: ADMIN or CUSTOMER)
+====================================================
+
+GET    /api/customers/{id}
+  Example: GET /api/customers/1
+
+PUT    /api/customers/{id}
+  Example: PUT /api/customers/1
+  Body:
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "newemail@example.com"
+    }
+
+PUT    /api/customers/{id}/address
+  Example: PUT /api/customers/1/address
+  Body:
+    {
+      "address": "123 Main Street",
+      "district": "Texas",
+      "postalCode": "75001",
+      "phone": "555-1234"
+    }
+
+GET    /api/customers/{id}/rentals
+  Example: GET /api/customers/1/rentals
+
+GET    /api/customers/{id}/payments
+  Example: GET /api/customers/1/payments
+
+POST   /api/customer/rentals
+  Body:
+    {
+      "inventoryId": 1,
+      "customerId": 1,
+      "staffId": 1
+    }
+
+====================================================
+  STAFF (Role: ADMIN or STAFF)
+====================================================
+
+GET    /api/staff
+GET    /api/staff/{id}
+  Example: GET /api/staff/1
+
+POST   /api/staff
+  Body:
+    {
+      "firstName": "Bob",
+      "lastName": "Jones",
+      "email": "bob@store.com",
+      "username": "bob.jones",
+      "password": "pass123",
+      "storeId": 1,
+      "addressId": 1,
+      "active": true
+    }
+
+PUT    /api/staff/{id}
+  Example: PUT /api/staff/1
+  Body: (same as POST)
+
+DELETE /api/staff/{id}
+  Example: DELETE /api/staff/1
+
+====================================================
+  RENTALS (Any authenticated user)
+====================================================
+
+POST   /api/v1/rentals?inventoryId=1&customerId=1&staffId=1
+
+GET    /api/v1/rentals
+GET    /api/v1/rentals/{id}
+  Example: GET /api/v1/rentals/1
+
+PUT    /api/v1/rentals/{id}/return
+  Example: PUT /api/v1/rentals/1/return
+
+DELETE /api/v1/rentals/{id}
+  Example: DELETE /api/v1/rentals/1
+
+PATCH  /api/v1/rentals/{id}
+  Example: PATCH /api/v1/rentals/1
+  Body (Partial update):
+    {
+      "staffId": 2,
+      "returnDate": "2026-04-14T15:30:00"
+    }
+
+====================================================
+  INVENTORY (Any authenticated user)
+====================================================
+
+GET    /api/inventory
+GET    /api/inventory/{id}
+  Example: GET /api/inventory/1
+
+GET    /api/inventory/film/{filmId}
+  Example: GET /api/inventory/film/1
+
+GET    /api/inventory/store/{storeId}
+  Example: GET /api/inventory/store/1
+
+GET    /api/inventory/available?filmId=1&storeId=1
+
+POST   /api/inventory
+  Body:
+    {
+      "filmId": 1,
+      "storeId": 1
+    }
+
+DELETE /api/inventory/{id}
+  Example: DELETE /api/inventory/1
+
+GET    /api/v1/inventory/{id}/rentals
+  Example: GET /api/inventory/1/rentals
+
+====================================================
+  ROLE PERMISSIONS SUMMARY
+====================================================
+
+  ADMIN    -> all endpoints
+  STAFF    -> /api/staff/**, /api/rentals/**, /api/inventory/**, /api/films/**
+  CUSTOMER -> /api/customers/**, /api/customer/rentals, /api/films/**
+
+====================================================

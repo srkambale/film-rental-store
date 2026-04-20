@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CustomerInventoryRepository extends JpaRepository<CustomerInventory, Long> {
-    List<CustomerInventory> findByFilm_FilmId(Long filmId);
+public interface CustomerInventoryRepository extends JpaRepository<CustomerInventory, Integer> {
+    List<CustomerInventory> findByFilm_FilmId(Integer filmId);
 }

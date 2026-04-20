@@ -24,7 +24,7 @@ public class CustomerRentalController {
     }
 
     @PutMapping("/{rentalId}/return")
-    public RentalResponseDto returnFilm(@PathVariable Long rentalId) {
+    public RentalResponseDto returnFilm(@PathVariable Integer rentalId) {
         return rentalService.returnFilm(rentalId);
     }
 }

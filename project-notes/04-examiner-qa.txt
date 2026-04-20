@@ -1,0 +1,255 @@
+====================================================
+  EXAMINER Q&A - QUESTIONS YOU MIGHT BE ASKED
+====================================================
+
+----------------------------------------------------
+Q: What is this project about?
+----------------------------------------------------
+A: It is a Film Rental Store REST API built with
+   Spring Boot. It uses the Sakila MySQL database
+   which is a sample database representing a DVD
+   rental store. The API allows customers to browse
+   films and manage rentals, staff to manage inventory,
+   and admins to oversee everything. Authentication
+   is done using JWT tokens.
+
+----------------------------------------------------
+Q: What is JWT and why did you use it?
+----------------------------------------------------
+A: JWT stands for JSON Web Token. It is a stateless
+   authentication mechanism. When a user logs in, the
+   server generates a signed token containing the
+   username and role. The client sends this token in
+   every request header. The server validates the
+   signature without needing to query the database
+   for every request. We used it because it works
+   well with REST APIs and does not require sessions.
+
+----------------------------------------------------
+Q: What is Spring Security and how does it work here?
+----------------------------------------------------
+A: Spring Security is a framework that handles
+   authentication and authorization. In this project:
+   - JwtAuthenticationFilter intercepts every request
+   - It reads the Authorization header
+   - Validates the JWT token
+   - Sets the user's identity in the SecurityContext
+   - SecurityConfig then checks if the user's role
+     has permission to access the requested endpoint
+
+----------------------------------------------------
+Q: What is the difference between Authentication
+   and Authorization?
+----------------------------------------------------
+A: Authentication = proving who you are (login with
+   username/password, get a token)
+   Authorization = checking what you are allowed to do
+   (CUSTOMER can view their own rentals, ADMIN can
+   view all rentals)
+
+----------------------------------------------------
+Q: What is a DTO and why use it?
+----------------------------------------------------
+A: DTO stands for Data Transfer Object. It is a simple
+   class that carries only the data needed for a
+   specific API response. We use DTOs instead of
+   returning raw entities because:
+   1. Entities may contain sensitive fields (password)
+   2. Entities may have circular references causing
+      infinite JSON loops
+   3. DTOs let you shape the response exactly as needed
+   4. Changes to the database schema do not break the API
+
+----------------------------------------------------
+Q: What is the difference between @Entity and @Table?
+----------------------------------------------------
+A: @Entity tells JPA that this class represents a
+   database table. @Table(name="customer") specifies
+   which exact table it maps to. If the class name
+   matches the table name you can skip @Table, but
+   it is good practice to always specify it.
+
+----------------------------------------------------
+Q: What is @JoinColumn?
+----------------------------------------------------
+A: @JoinColumn defines the foreign key column in a
+   relationship. For example in Rental.java:
+     @ManyToOne
+     @JoinColumn(name = "customer_id")
+     private Customer customer;
+   This means the rental table has a customer_id column
+   that is a foreign key pointing to the customer table.
+
+----------------------------------------------------
+Q: What is the difference between @ManyToOne and
+   @OneToMany?
+----------------------------------------------------
+A: @ManyToOne: many records point to one record
+   Example: many rentals belong to one customer
+   (put @ManyToOne on the Rental side)
+
+   @OneToMany: one record has many related records
+   Example: one customer has many rentals
+   (put @OneToMany on the Customer side, mappedBy="customer")
+
+----------------------------------------------------
+Q: What is ddl-auto and what values did you use?
+----------------------------------------------------
+A: spring.jpa.hibernate.ddl-auto controls what Hibernate
+   does to the database schema on startup:
+
+   create     - drops and recreates all tables (destroys data)
+   update     - tries to ALTER tables to match entities
+   validate   - checks entities match DB, fails if not
+   none       - does nothing to the schema
+
+   We started with update but it caused ALTER TABLE errors
+   because MySQL rejected changes to columns with foreign
+   keys. We switched to none so Hibernate never touches
+   the Sakila schema.
+
+----------------------------------------------------
+Q: What is columnDefinition and why did you need it?
+----------------------------------------------------
+A: columnDefinition lets you specify the exact SQL type
+   for a column. Hibernate normally maps Java Integer to
+   SQL integer (32-bit signed). But Sakila uses
+   SMALLINT UNSIGNED and TINYINT UNSIGNED which are
+   smaller types. Without columnDefinition, Hibernate
+   would try to ALTER the columns to integer, which
+   MySQL rejects due to foreign key constraints.
+
+   Example:
+     @Column(name = "customer_id",
+             columnDefinition = "SMALLINT UNSIGNED")
+     private Integer customerId;
+
+----------------------------------------------------
+Q: Why are there two entity classes for the same table?
+   (e.g. Customer.java and AuthCustomer.java)
+----------------------------------------------------
+A: This is a result of collaborative development where
+   different team members own different modules. The
+   auth module needs a lightweight version of the
+   customer entity just for registration. The customer
+   module has a full version with all relationships.
+   In a production system you would ideally have one
+   shared entity, but for module separation this
+   approach works.
+
+----------------------------------------------------
+Q: What is @Lob and when do you use it?
+----------------------------------------------------
+A: @Lob stands for Large Object. It tells JPA that
+   this field stores large binary or text data.
+   We used it for the staff picture field:
+     @Lob
+     @Column(name = "picture", columnDefinition = "MEDIUMBLOB")
+     private byte[] picture;
+   Without @Lob, Hibernate would map byte[] to a small
+   binary type which cannot hold large images.
+
+----------------------------------------------------
+Q: How does the registration flow work?
+----------------------------------------------------
+A: 1. Client sends POST /api/auth/register with
+      firstName, lastName, email, password, role
+   2. AuthService checks the role
+   3. If CUSTOMER:
+      - Saves to customer table (Sakila)
+      - Saves to user_auth table with refId = customer_id
+   4. If STAFF:
+      - Saves to staff table (Sakila)
+      - Saves to user_auth table with refId = staff_id
+   5. Generates JWT token
+   6. Returns token + role to client
+
+----------------------------------------------------
+Q: How does login work?
+----------------------------------------------------
+A: 1. Client sends POST /api/auth/login with
+      identifier (username or email) and password
+   2. Spring Security AuthenticationManager verifies
+      the credentials against user_auth table
+   3. If valid, loads the user's role from user_auth
+   4. Generates JWT token with role embedded
+   5. Returns token + role + identifier
+
+----------------------------------------------------
+Q: What happens if someone sends a request without a token?
+----------------------------------------------------
+A: The JwtAuthenticationFilter sees no Authorization
+   header and skips setting authentication. Spring
+   Security then checks the SecurityConfig rules.
+   If the endpoint requires authentication, it returns:
+     401 Unauthorized
+     {"error": "Unauthorized",
+      "message": "Full authentication is required"}
+
+----------------------------------------------------
+Q: What is the Sakila database?
+----------------------------------------------------
+A: Sakila is a sample MySQL database provided by Oracle.
+   It models a DVD rental store with tables for:
+   films, actors, categories, customers, staff,
+   inventory, rentals, and payments. It has realistic
+   foreign key relationships and is commonly used for
+   learning and demonstrations.
+
+----------------------------------------------------
+Q: What modules are still remaining to be built?
+----------------------------------------------------
+A: Two modules are not yet complete:
+
+   1. Payment Module:
+      - PaymentController (/api/payments/**)
+      - PaymentService and PaymentServiceImpl
+      - Endpoints to create payments, view by customer,
+        view overdue amounts
+
+   2. Admin Module:
+      - AdminController (/api/admin/**)
+      - Endpoints to view all customers, all staff,
+        revenue reports, overdue rentals, deactivate users
+
+   The entities, DTOs, and repositories for payments
+   already exist in the customer module. The admin
+   module needs to be built from scratch.
+
+----------------------------------------------------
+Q: What is @Transactional and where is it used?
+----------------------------------------------------
+A: @Transactional ensures that a group of database
+   operations either all succeed or all fail together.
+   If any step throws an exception, all changes are
+   rolled back. In this project it is used on the
+   register() method in AuthService because it writes
+   to two tables (customer/staff AND user_auth). If
+   the second write fails, the first is rolled back.
+
+----------------------------------------------------
+Q: What is BCrypt and why is it used for passwords?
+----------------------------------------------------
+A: BCrypt is a password hashing algorithm. Passwords
+   are never stored as plain text. BCrypt hashes the
+   password with a random salt, making it impossible
+   to reverse. When a user logs in, BCrypt compares
+   the entered password against the stored hash.
+   Spring Security's BCryptPasswordEncoder handles this.
+
+----------------------------------------------------
+Q: What is the role of @RestController vs @Controller?
+----------------------------------------------------
+A: @Controller is used for MVC applications that return
+   HTML views (like Thymeleaf templates).
+   @RestController is used for REST APIs that return
+   JSON. It is a combination of @Controller and
+   @ResponseBody, meaning every method automatically
+   serializes the return value to JSON.
+
+   This project uses both:
+   - @RestController for all API endpoints
+   - @Controller (implied) for the Thymeleaf HTML pages
+     in the templates folder (login.html, admin.html, etc.)
+
+====================================================
