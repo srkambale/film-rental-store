@@ -32,6 +32,11 @@ public interface PaymentService {
     List<PaymentResponseDto> getPaymentsByCustomer(Integer customerId);
 
     /**
+     * Retrieve all payments made by the logged in customer using their email.
+     */
+    List<PaymentResponseDto> getMyPayments(String email);
+
+    /**
      * Retrieve the payment associated with a specific rental.
      */
     PaymentResponseDto getPaymentByRental(Integer rentalId);

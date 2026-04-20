@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.customer.dto.FilmSearchDto;
 import com.example.demo.customer.service.FilmService;
 
+@CrossOrigin(origins = "http://10.30.74.131:8082")
 @RestController
 @RequestMapping("/api/v1/films")
 public class FilmController {

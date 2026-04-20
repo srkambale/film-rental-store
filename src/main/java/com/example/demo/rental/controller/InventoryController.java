@@ -9,6 +9,7 @@ import com.example.demo.rental.service.InventoryService;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://10.30.74.131:8082")
 @RestController
 @RequestMapping("/api/v1/inventory")
 public class InventoryController {

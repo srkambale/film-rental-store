@@ -12,6 +12,7 @@ import com.example.demo.customer.dto.PaymentDto;
 import com.example.demo.customer.dto.RentalResponseDto;
 import com.example.demo.customer.service.CustomerService;
 
+@CrossOrigin(origins = "http://10.30.74.131:8082")
 @RestController
 @RequestMapping("/api/v1/customer")
 public class CustomerController {

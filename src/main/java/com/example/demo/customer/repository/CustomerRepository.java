@@ -17,6 +17,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     List<Customer> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(String firstName, String lastName);
 
+    java.util.Optional<Customer> findByEmail(String email);
+
     @Query("SELECT c FROM Customer c WHERE LOWER(c.address.city.city) LIKE LOWER(CONCAT('%', :location, '%')) OR LOWER(c.address.district) LIKE LOWER(CONCAT('%', :location, '%')) OR LOWER(c.address.city.country.country) LIKE LOWER(CONCAT('%', :location, '%'))")
     List<Customer> findByLocationIgnoreCase(@org.springframework.data.repository.query.Param("location") String location);
 }

@@ -35,7 +35,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 // PaymentService and PaymentController use Integer (not Long) for all IDs
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
 @WebMvcTest(controllers = PaymentController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import(PaymentControllerTest.TestSecurityConfig.class)
 public class PaymentControllerTest {
 
@@ -95,11 +98,11 @@ public class PaymentControllerTest {
 
         @Test
         void testGetMyPayments_returnsOk() {
-            // getPaymentsByCustomer(Integer customerId)
-            when(unitPaymentService.getPaymentsByCustomer(1)).thenReturn(Arrays.asList(responseDto));
-            ResponseEntity<List<PaymentResponseDto>> response = unitPaymentController.getMyPayments(1);
+            java.security.Principal principal = () -> "test@example.com";
+            when(unitPaymentService.getMyPayments("test@example.com")).thenReturn(Arrays.asList(responseDto));
+            ResponseEntity<List<PaymentResponseDto>> response = unitPaymentController.getMyPayments(principal);
             assertEquals(HttpStatus.OK, response.getStatusCode());
-            verify(unitPaymentService).getPaymentsByCustomer(1);
+            verify(unitPaymentService).getMyPayments("test@example.com");
         }
 
         @Test
@@ -179,11 +182,11 @@ public class PaymentControllerTest {
                     .andExpect(jsonPath("$.amount").value(10.00));
         }
 
-        // ── GET /api/v1/payments/my?customerId=1 — Integer request param ─────
+        // ── GET /api/v1/payments/my ──────────────────────────────────────────
         @Test
         void GET_myPayments_returns200() throws Exception {
-            when(paymentService.getPaymentsByCustomer(1)).thenReturn(Arrays.asList(responseDto));
-            mockMvc.perform(get("/api/v1/payments/my").param("customerId", "1"))
+            when(paymentService.getMyPayments("test@example.com")).thenReturn(java.util.Arrays.asList(responseDto));
+            mockMvc.perform(get("/api/v1/payments/my").principal(() -> "test@example.com"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(1));
         }

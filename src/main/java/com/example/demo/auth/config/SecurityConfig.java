@@ -55,6 +55,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/v1/staff/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
                         .requestMatchers("/api/v1/customer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CUSTOMER")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/payments").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/payments/my").hasAuthority("ROLE_CUSTOMER")
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/payments/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STAFF")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

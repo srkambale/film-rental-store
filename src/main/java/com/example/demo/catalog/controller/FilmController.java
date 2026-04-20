@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 // Add the unique bean name right here inside the annotation!
+@CrossOrigin(origins = "http://10.30.74.131:8082")
 @RestController("catalogFilmController") 
 @RequestMapping("/api/v1/catalog/films")
 public class FilmController {

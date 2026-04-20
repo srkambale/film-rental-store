@@ -19,14 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Implementation of PaymentService.
- *
- * Architecture: Controller → PaymentService → PaymentRepository
- *
- * Payment logic is simulated (mock): every valid request is treated as
- * SUCCESS provided validations pass.
- */
+
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
@@ -43,12 +36,12 @@ public class PaymentServiceImpl implements PaymentService {
         this.rentalRepository     = rentalRepository;
     }
 
-    // ─── Process Payment ─────────────────────────────────────────────────────
+   
 
     @Override
     public PaymentResponseDto processPayment(PaymentRequestDto request) {
 
-        // 1. Validate required fields
+        
         if (request.getCustomerId() == null) {
             throw new CustomerBadRequestException("customerId is required.");
         }
@@ -84,7 +77,7 @@ public class PaymentServiceImpl implements PaymentService {
                     "Payment already exists for rental ID: " + request.getRentalId());
         }
 
-        // 5. Build and persist Payment entity (mock: always succeeds)
+      
         Payment payment = new Payment();
         payment.setCustomerId(request.getCustomerId());
         payment.setStaffId(request.getStaffId() != null ? request.getStaffId() : 1);
@@ -94,14 +87,14 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment saved = paymentRepository.save(payment);
 
-        // 6. Build success response
+       
         PaymentResponseDto response = mapToDto(saved);
         response.setStatus("SUCCESS");
         response.setMessage("Payment processed successfully for rental ID: " + request.getRentalId());
         return response;
     }
 
-    // ─── Fetch All Payments ───────────────────────────────────────────────────
+   
 
     @Override
     public List<PaymentResponseDto> getAllPayments() {
@@ -111,7 +104,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .collect(Collectors.toList());
     }
 
-    // ─── Fetch Payment by ID ─────────────────────────────────────────────────
+   
 
     @Override
     public PaymentResponseDto getPaymentById(Integer paymentId) {
@@ -134,6 +127,13 @@ public class PaymentServiceImpl implements PaymentService {
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PaymentResponseDto> getMyPayments(String email) {
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomerResourceNotFoundException("Customer not found with email: " + email));
+        return getPaymentsByCustomer(customer.getCustomerId());
     }
 
     // ─── Fetch Payment by Rental ─────────────────────────────────────────────

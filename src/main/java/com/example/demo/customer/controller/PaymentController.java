@@ -18,6 +18,7 @@ import java.util.Map;
  *
  * Base path: /api/v1/payments
  */
+@CrossOrigin(origins = "http://10.30.74.131:8082")
 @RestController
 @RequestMapping("/api/v1/payments")
 public class PaymentController {
@@ -39,15 +40,18 @@ public class PaymentController {
         return ResponseEntity.ok(payments);
     }
 
-    // ─── GET /api/payments/my?customerId=1 ────────────────────────────────────
+    // ─── GET /api/v1/payments/my ────────────────────────────────────
     /**
-     * Retrieve payments for a specific customer using a query param.
-     * Example: GET /api/payments/my?customerId=1
+     * Retrieve payments for the currently logged in customer.
+     * Example: GET /api/v1/payments/my
      */
     @GetMapping("/my")
     public ResponseEntity<List<PaymentResponseDto>> getMyPayments(
-            @RequestParam Integer customerId) {
-        List<PaymentResponseDto> payments = paymentService.getPaymentsByCustomer(customerId);
+            java.security.Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<PaymentResponseDto> payments = paymentService.getMyPayments(principal.getName());
         return ResponseEntity.ok(payments);
     }
 
