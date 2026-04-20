@@ -28,10 +28,7 @@ public class ActorController {
         return actorService.searchActors(name);
     }
 
-    @GetMapping("/{id}")
-    public ActorDto getActorById(@PathVariable Long id) {
-        return actorService.getActorById(id);
-    }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

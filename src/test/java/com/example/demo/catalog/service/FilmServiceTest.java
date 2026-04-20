@@ -51,10 +51,10 @@ class FilmServiceTest {
 
     @Test
     void testSearchFilms_TitleOnly() {
-        when(filmRepository.findByTitleContainingIgnoreCase("Incep"))
+        when(filmRepository.searchFilms("Incep", null))
                 .thenReturn(List.of(film));
 
-        List<FilmSummaryDto> result = filmService.searchFilms("Incep", null);
+        List<FilmDto> result = filmService.searchFilms("Incep", null);
 
         assertEquals(1, result.size());
         assertEquals("Inception", result.get(0).title());
@@ -62,10 +62,10 @@ class FilmServiceTest {
 
     @Test
     void testSearchFilms_YearOnly() {
-        when(filmRepository.findByReleaseYear(2010))
+        when(filmRepository.searchFilms(null, 2010))
                 .thenReturn(List.of(film));
 
-        List<FilmSummaryDto> result = filmService.searchFilms(null, 2010);
+        List<FilmDto> result = filmService.searchFilms(null, 2010);
 
         assertEquals(1, result.size());
         assertEquals(2010, result.get(0).releaseYear());
@@ -73,19 +73,19 @@ class FilmServiceTest {
 
     @Test
     void testSearchFilms_Both() {
-        when(filmRepository.findByTitleContainingIgnoreCaseAndReleaseYear("Incep", 2010))
+        when(filmRepository.searchFilms("Incep", 2010))
                 .thenReturn(List.of(film));
 
-        List<FilmSummaryDto> result = filmService.searchFilms("Incep", 2010);
+        List<FilmDto> result = filmService.searchFilms("Incep", 2010);
 
         assertEquals(1, result.size());
     }
 
     @Test
     void testSearchFilms_None() {
-        when(filmRepository.findAll()).thenReturn(List.of(film));
+        when(filmRepository.searchFilms(null, null)).thenReturn(List.of(film));
 
-        List<FilmSummaryDto> result = filmService.searchFilms(null, null);
+        List<FilmDto> result = filmService.searchFilms(null, null);
 
         assertEquals(1, result.size());
     }
@@ -99,14 +99,7 @@ class FilmServiceTest {
         assertEquals(1, result.size());
     }
 
-    @Test
-    void testGetFilmsByActor() {
-        when(filmRepository.findByActorId(1L)).thenReturn(List.of(film));
 
-        List<FilmSummaryDto> result = filmService.getFilmsByActor(1L);
-
-        assertEquals(1, result.size());
-    }
 
     @Test
     void testGetFilmsByActorName() {
@@ -135,20 +128,5 @@ class FilmServiceTest {
         assertEquals(1, result.size());
     }
 
-    @Test
-    void testGetFilmById_Success() {
-        when(filmRepository.findById(1L)).thenReturn(Optional.of(film));
 
-        FilmDto result = filmService.getFilmById(1L);
-
-        assertNotNull(result);
-        assertEquals("Inception", result.title());
-    }
-
-    @Test
-    void testGetFilmById_NotFound() {
-        when(filmRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> filmService.getFilmById(99L));
-    }
 }

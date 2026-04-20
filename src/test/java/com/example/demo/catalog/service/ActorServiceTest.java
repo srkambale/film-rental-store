@@ -53,23 +53,6 @@ class ActorServiceTest {
     }
 
     @Test
-    void testGetActorById_Success() {
-        when(actorRepository.findById(1L)).thenReturn(Optional.of(actor));
-
-        ActorDto result = actorService.getActorById(1L);
-
-        assertNotNull(result);
-        assertEquals("DOE", result.lastName());
-    }
-
-    @Test
-    void testGetActorById_NotFound() {
-        when(actorRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> actorService.getActorById(99L));
-    }
-
-    @Test
     void testCreateActor() {
         when(actorRepository.save(any(Actor.class))).thenReturn(actor);
 

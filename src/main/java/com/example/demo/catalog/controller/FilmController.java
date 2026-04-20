@@ -25,7 +25,7 @@ public class FilmController {
     }
 
     @GetMapping("/search")
-    public List<FilmSummaryDto> searchFilms(
+    public List<FilmDto> searchFilms(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Integer year) {
         return filmService.searchFilms(title, year);
@@ -36,10 +36,7 @@ public class FilmController {
         return filmService.getFilmsByCategory(categoryName);
     }
 
-    @GetMapping("/actor/{actorId}")
-    public List<FilmSummaryDto> getFilmsByActor(@PathVariable Long actorId) {
-        return filmService.getFilmsByActor(actorId);
-    }
+
 
     @GetMapping("/actor")
     public List<FilmSummaryDto> getFilmsByActorName(@RequestParam String name) {
@@ -56,10 +53,7 @@ public class FilmController {
         return filmService.getFilmsByRating(rating);
     }
 
-    @GetMapping("/{id}")
-    public FilmDto getFilmById(@PathVariable Long id) {
-        return filmService.getFilmById(id);
-    }
+
 
     @PatchMapping("/{id}")
     public FilmDto patchFilm(@PathVariable Long id, @RequestBody FilmUpdateDto updates) {

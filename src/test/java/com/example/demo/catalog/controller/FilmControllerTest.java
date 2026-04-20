@@ -78,13 +78,14 @@ public class FilmControllerTest {
 
     @Test
     void searchFilms_ShouldReturnFilteredList() throws Exception {
-        when(filmService.searchFilms("ACADEMY", 2006)).thenReturn(Arrays.asList(filmSummaryDto));
+        when(filmService.searchFilms("ACADEMY", 2006)).thenReturn(Arrays.asList(filmDto));
 
         mockMvc.perform(get("/api/v1/catalog/films/search")
                         .param("title", "ACADEMY")
                         .param("year", "2006"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("ACADEMY DINOSAUR"));
+                .andExpect(jsonPath("$[0].title").value("ACADEMY DINOSAUR"))
+                .andExpect(jsonPath("$[0].description").exists());
     }
 
     @Test
@@ -96,14 +97,7 @@ public class FilmControllerTest {
                 .andExpect(jsonPath("$[0].title").value("ACADEMY DINOSAUR"));
     }
 
-    @Test
-    void getFilmsByActor_ShouldReturnList() throws Exception {
-        when(filmService.getFilmsByActor(1L)).thenReturn(Arrays.asList(filmSummaryDto));
 
-        mockMvc.perform(get("/api/v1/catalog/films/actor/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("ACADEMY DINOSAUR"));
-    }
 
     @Test
     void getFilmsByActorName_ShouldReturnList() throws Exception {
@@ -131,23 +125,6 @@ public class FilmControllerTest {
         mockMvc.perform(get("/api/v1/catalog/films/rating/PG"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("ACADEMY DINOSAUR"));
-    }
-
-    @Test
-    void getFilmById_WhenExists_ShouldReturnFilm() throws Exception {
-        when(filmService.getFilmById(1L)).thenReturn(filmDto);
-
-        mockMvc.perform(get("/api/v1/catalog/films/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("ACADEMY DINOSAUR"));
-    }
-
-    @Test
-    void getFilmById_WhenNotExists_ShouldReturn404() throws Exception {
-        when(filmService.getFilmById(1L)).thenThrow(new ResourceNotFoundException("Film not found"));
-
-        mockMvc.perform(get("/api/v1/catalog/films/1"))
-                .andExpect(status().isNotFound());
     }
 
     @Test

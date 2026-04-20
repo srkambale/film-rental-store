@@ -78,22 +78,7 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$[0].name").value("Action"));
     }
 
-    @Test
-    void getCategoryById_WhenExists_ShouldReturnCategory() throws Exception {
-        when(categoryService.getCategoryById(1L)).thenReturn(categoryDto);
 
-        mockMvc.perform(get("/api/v1/catalog/categories/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Action"));
-    }
-
-    @Test
-    void getCategoryById_WhenNotExists_ShouldReturn404() throws Exception {
-        when(categoryService.getCategoryById(1L)).thenThrow(new ResourceNotFoundException("Category not found"));
-
-        mockMvc.perform(get("/api/v1/catalog/categories/1"))
-                .andExpect(status().isNotFound());
-    }
 
     @Test
     void createCategory_ShouldReturnCreated() throws Exception {

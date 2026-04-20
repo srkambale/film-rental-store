@@ -35,19 +35,12 @@ public class FilmService {
     }
 
     @Transactional(readOnly = true)
-    public List<FilmSummaryDto> searchFilms(String title, Integer year) {
-        List<Film> films;
-        if (title != null && year != null) {
-            films = filmRepository.findByTitleContainingIgnoreCaseAndReleaseYear(title, year);
-        } else if (title != null) {
-            films = filmRepository.findByTitleContainingIgnoreCase(title);
-        } else if (year != null) {
-            films = filmRepository.findByReleaseYear(year);
-        } else {
-            films = filmRepository.findAll();
-        }
-        return films.stream()
-                .map(this::mapToSummaryDto)
+    public List<FilmDto> searchFilms(String title, Integer year) {
+        // Treat blank title as null for repository query
+        String searchTitle = (title != null && !title.trim().isEmpty()) ? title.trim() : null;
+        
+        return filmRepository.searchFilms(searchTitle, year).stream()
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -58,12 +51,7 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public List<FilmSummaryDto> getFilmsByActor(Long actorId) {
-        return filmRepository.findByActorId(actorId).stream()
-                .map(this::mapToSummaryDto)
-                .collect(Collectors.toList());
-    }
+
 
     @Transactional(readOnly = true)
     public List<FilmSummaryDto> getFilmsByActorName(String name) {
@@ -86,12 +74,7 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public FilmDto getFilmById(Long id) {
-        return filmRepository.findById(id)
-                .map(this::mapToDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Film not found"));
-    }
+
 
     @Transactional
     public FilmDto patchFilm(Long id, FilmUpdateDto updates) {

@@ -195,4 +195,16 @@ public class Film {
     public void setFilmCategories(Set<FilmCategory> filmCategories) {
         this.filmCategories = filmCategories;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Film film)) return false;
+        return filmId != null && filmId.equals(film.filmId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -34,12 +34,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public CategoryDto getCategoryById(Long id) {
-        return categoryRepository.findById(id)
-                .map(this::mapToDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-    }
+
 
     @Transactional
     public CategoryDto createCategory(CategoryDto dto) {

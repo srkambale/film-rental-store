@@ -73,22 +73,7 @@ public class ActorControllerTest {
                 .andExpect(jsonPath("$[0].firstName").value("PENELOPE"));
     }
 
-    @Test
-    void getActorById_WhenExists_ShouldReturnActor() throws Exception {
-        when(actorService.getActorById(1L)).thenReturn(actorDto);
 
-        mockMvc.perform(get("/api/v1/catalog/actors/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("PENELOPE"));
-    }
-
-    @Test
-    void getActorById_WhenNotExists_ShouldReturn404() throws Exception {
-        when(actorService.getActorById(1L)).thenThrow(new ResourceNotFoundException("Actor not found"));
-
-        mockMvc.perform(get("/api/v1/catalog/actors/1"))
-                .andExpect(status().isNotFound());
-    }
 
     @Test
     void createActor_ShouldReturnCreated() throws Exception {

@@ -27,13 +27,6 @@ public class ActorService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public ActorDto getActorById(Long id) {
-        return actorRepository.findById(id)
-                .map(this::mapToDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Actor not found"));
-    }
-
     @Transactional
     public ActorDto createActor(ActorDto dto) {
         Actor actor = new Actor();

@@ -28,10 +28,7 @@ public class CategoryController {
         return categoryService.searchCategories(name);
     }
 
-    @GetMapping("/{id}")
-    public CategoryDto getCategoryById(@PathVariable Long id) {
-        return categoryService.getCategoryById(id);
-    }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

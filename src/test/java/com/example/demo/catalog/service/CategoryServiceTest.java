@@ -50,22 +50,7 @@ class CategoryServiceTest {
         assertEquals("Action", result.get(0).name());
     }
 
-    @Test
-    void testGetCategoryById_Success() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
 
-        CategoryDto result = categoryService.getCategoryById(1L);
-
-        assertNotNull(result);
-        assertEquals("Action", result.name());
-    }
-
-    @Test
-    void testGetCategoryById_NotFound() {
-        when(categoryRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> categoryService.getCategoryById(99L));
-    }
 
     @Test
     void testCreateCategory() {

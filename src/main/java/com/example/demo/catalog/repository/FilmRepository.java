@@ -11,15 +11,18 @@ import org.springframework.data.repository.query.Param;
 
 @Repository("catalogFilmRepository")
 public interface FilmRepository extends JpaRepository<Film, Long> {
-    List<Film> findByTitleContainingIgnoreCase(String title);
-    List<Film> findByReleaseYear(Integer releaseYear);
-    List<Film> findByTitleContainingIgnoreCaseAndReleaseYear(String title, Integer releaseYear);
+    @Query("SELECT DISTINCT f FROM CatalogFilm f " +
+           "LEFT JOIN FETCH f.filmActors " +
+           "LEFT JOIN FETCH f.filmCategories " +
+           "LEFT JOIN FETCH f.language " +
+           "WHERE (COALESCE(:title, '') = '' OR LOWER(f.title) LIKE LOWER(CONCAT('%', :title, '%'))) " +
+           "AND (:year IS NULL OR f.releaseYear = :year)")
+    List<Film> searchFilms(@Param("title") String title, @Param("year") Integer year);
     
     @Query("SELECT fc.film FROM CatalogFilmCategory fc WHERE fc.category.name = :categoryName")
     List<Film> findByCategoryName(@Param("categoryName") String categoryName);
 
-    @Query("SELECT fa.film FROM CatalogFilmActor fa WHERE fa.actor.actorId = :actorId")
-    List<Film> findByActorId(@Param("actorId") Long actorId);
+
 
     @Query("SELECT fa.film FROM CatalogFilmActor fa WHERE " +
            "LOWER(fa.actor.firstName) LIKE LOWER(CONCAT('%', :name, '%')) OR " +
