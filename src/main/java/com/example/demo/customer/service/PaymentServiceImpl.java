@@ -2,8 +2,8 @@ package com.example.demo.customer.service;
 
 import com.example.demo.customer.dto.PaymentRequestDto;
 import com.example.demo.customer.dto.PaymentResponseDto;
-import com.example.demo.customer.exception.CustomerBadRequestException;
-import com.example.demo.customer.exception.CustomerResourceNotFoundException;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.customer.model.Customer;
 import com.example.demo.customer.model.CustomerRental;
 import com.example.demo.customer.model.Payment;
@@ -43,24 +43,24 @@ public class PaymentServiceImpl implements PaymentService {
 
         
         if (request.getCustomerId() == null) {
-            throw new CustomerBadRequestException("customerId is required.");
+            throw new BadRequestException("customerId is required.");
         }
         if (request.getRentalId() == null) {
-            throw new CustomerBadRequestException("rentalId is required.");
+            throw new BadRequestException("rentalId is required.");
         }
         if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new CustomerBadRequestException("Amount must be greater than zero.");
+            throw new BadRequestException("Amount must be greater than zero.");
         }
 
         // 2. Validate customer exists
         Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new CustomerResourceNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Customer not found with ID: " + request.getCustomerId()));
 
         // 3. Validate rental exists and belongs to the customer
         CustomerRental rental = rentalRepository
                 .fetchByCustomerIdAndRentalId(request.getCustomerId(), request.getRentalId())
-                .orElseThrow(() -> new CustomerResourceNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Rental not found with ID " + request.getRentalId()
                         + " for customer ID " + request.getCustomerId()));
 
@@ -73,7 +73,7 @@ public class PaymentServiceImpl implements PaymentService {
                         && rental.getRentalId().equals(p.getRental().getRentalId()));
 
         if (alreadyPaid) {
-            throw new CustomerBadRequestException(
+            throw new BadRequestException(
                     "Payment already exists for rental ID: " + request.getRentalId());
         }
 
@@ -109,7 +109,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponseDto getPaymentById(Integer paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new CustomerResourceNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                          "Payment not found with ID: " + paymentId));
         return mapToDto(payment);
     }
@@ -120,7 +120,7 @@ public class PaymentServiceImpl implements PaymentService {
     public List<PaymentResponseDto> getPaymentsByCustomer(Integer customerId) {
         // Verify customer exists before querying
         customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerResourceNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Customer not found with ID: " + customerId));
 
         return paymentRepository.findByCustomerId(customerId)
@@ -142,7 +142,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseDto getPaymentByRental(Integer rentalId) {
         // Verify rental exists
         rentalRepository.findById(rentalId)
-                .orElseThrow(() -> new CustomerResourceNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Rental not found with ID: " + rentalId));
 
         return paymentRepository.findAll()
@@ -151,7 +151,7 @@ public class PaymentServiceImpl implements PaymentService {
                         && rentalId.equals(p.getRental().getRentalId()))
                 .findFirst()
                 .map(this::mapToDto)
-                .orElseThrow(() -> new CustomerResourceNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "No payment found for rental ID: " + rentalId));
     }
 
@@ -161,7 +161,7 @@ public class PaymentServiceImpl implements PaymentService {
     public BigDecimal getCustomerBalance(Integer customerId) {
         // Verify customer exists
         customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerResourceNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Customer not found with ID: " + customerId));
 
         return paymentRepository.findByCustomerId(customerId)

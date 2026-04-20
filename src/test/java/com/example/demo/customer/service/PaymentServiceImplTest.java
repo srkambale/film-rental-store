@@ -2,7 +2,7 @@ package com.example.demo.customer.service;
 
 import com.example.demo.customer.dto.PaymentRequestDto;
 import com.example.demo.customer.dto.PaymentResponseDto;
-import com.example.demo.customer.exception.CustomerResourceNotFoundException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.customer.model.Customer;
 import com.example.demo.customer.model.CustomerRental;
 import com.example.demo.customer.model.Payment;
@@ -76,7 +76,7 @@ class PaymentServiceImplTest {
         when(customerRepository.findById(1)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(CustomerResourceNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             paymentService.processPayment(request);
         });
 
